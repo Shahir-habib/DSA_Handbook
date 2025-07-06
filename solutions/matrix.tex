@@ -131,10 +131,10 @@ def median_row_wise_sorted_matrix(matrix: List[List[int]]) -> int:
 
     while min_val <= max_val:
         mid_val = (min_val + max_val) // 2
-        count = 0 #Count how many entries ≤ mid across all rows
+        count = 0 #Count how many entries <= mid across all rows
         for r in range(rows):
             count += bisect.bisect_right(matrix[r], mid_val)
-        # If fewer than desired are ≤ mid, median must be bigger
+        # If fewer than desired are <= mid, median must be bigger
         if count < desired_count:
             min_val = mid_val + 1
         else:

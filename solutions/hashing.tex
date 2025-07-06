@@ -206,15 +206,15 @@ from typing import List, Any
 
 def more_than_n_over_k(arr: List[Any], k: int) -> List[Any]:
     """
-    Return all elements in `arr` that appear more than len(arr)//k times.
-    Uses a Boyer–Moore–style majority‐vote generalization with at most k−1 candidates.
+    Return all elements in arr that appear more than len(arr)//k times.
+    Uses a Boyer–Moore–style majority‐vote generalization with at most k - 1 candidates.
     Time Complexity: O(n), Space Complexity: O(k)
     """
     n = len(arr)
     if k < 2:
         raise ValueError("k must be at least 2")
 
-    # 1) First pass: find up to (k−1) potential candidates
+    # 1) First pass: find up to k-1 potenstial candidates
     #    Maintain a map of candidate -> “vote count”
     candidates = {}  # type: dict[Any, int]
     for x in arr:

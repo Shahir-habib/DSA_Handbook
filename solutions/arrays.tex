@@ -609,9 +609,9 @@ def longest_ones(nums: List[int], k: int) -> int:
                 zc -= 1
             left += 1
 
-        # 3) Now window [left..right] has ≤ k zeros: record its size
+        # 3) Now window [left..right] has <= k zeros: record its size
         #    We only update when it's valid; this guarantees max_len always
-        #    reflects a window we could actually achieve by flipping ≤ k zeros.
+        #    reflects a window we could actually achieve by flipping <= k zeros.
         if zc <= k:
             max_len = max(max_len, right - left + 1)
 
@@ -691,7 +691,7 @@ def longest_substring_k_distinct(s: str, k: int) -> int:
             # move left pointer just beyond that char’s last occurrence
             left = old_index + 1
 
-        # window is valid: [left..right] contains ≤ k distinct characters
+        # window is valid: [left..right] contains <= k distinct characters
         max_len = max(max_len, right - left + 1)
 
     return max_len
@@ -996,8 +996,8 @@ def count_subarrays_with_sum_k(nums: List[int], k: int) -> int:
         # 1) Extend window to the right
         curr_sum += v
 
-        # 2) Shrink from the left until sum ≤ k
-        #    (valid because every element ≥ 0)
+        # 2) Shrink from the left until sum <= k
+        #    (valid because every element >= 0)
         while curr_sum > k and left <= right:
             curr_sum -= nums[left]
             left += 1
@@ -1141,7 +1141,7 @@ def max_product_subarray(nums: List[int]) -> int:
 
 \end{minted}
 
-\noindent\textbf{Problem: Find Rotation Count (Sorted & Rotated Array)}
+\noindent\textbf{Problem: Find Rotation Count (Sorted and Rotated Array)}
 \begin{minted}[
     bgcolor=bgcolor6,
     frame=lines,

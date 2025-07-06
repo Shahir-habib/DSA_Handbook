@@ -42,7 +42,7 @@ def xor_1_to_n(n: int) -> int:
     # Using n & 3 is a fast bitwise trick for n % 4.(For 2^x can use & with 2^x -1)
     r = n & 3
     if r == 0:
-        # Sequence ends in 0 ^ 1 ^ … ^ (4k−1) ^ 4k;
+        # Sequence ends in 0 ^ 1 ^ … ^ 4k - 1 ^ 4k;
         # every block of 4 numbers has XOR = 0 ^ 1 ^ 2 ^ 3 = 0,
         # so only the last term (n) remains.
         return n
