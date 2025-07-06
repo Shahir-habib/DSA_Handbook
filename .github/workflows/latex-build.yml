@@ -24,7 +24,7 @@ jobs:
         with:
           root_file: main.tex
           extra_system_packages: "py-pygments"
-          args: -pdf -file-line-error -interaction=nonstopmode -shell-escape
+          args: -pdf -f -file-line-error -interaction=nonstopmode -shell-escape
           latexmk_shell_escape: true
   
       - name: Move PDF into docs/
