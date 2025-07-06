@@ -1,0 +1,253 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{Hashing Problem Solutions}
+\noindent\textbf{Problem: Intersection and Union of Arrays}
+\begin{minted}[bgcolor=bgcolor3,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def intersection_union(a, b):
+    """
+    Return the intersection and union of two arrays.
+    Time Complexity: O(n + m)
+    """
+    sa, sb = set(a), set(b)
+    # Intersection: elements common to both
+    inter = sa & sb
+    # Union: all elements from both
+    uni   = sa | sb
+    return list(inter), list(uni)
+\end{minted}
+
+\noindent\textbf{Problem: Subarray with Sum = 0}
+\begin{minted}[bgcolor=bgcolor4,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def has_zero_sum_subarray(arr):
+    """
+    Check if any subarray sums to zero.
+    Time Complexity: O(n)
+    """
+    seen = set([0])
+    prefix = 0
+    for x in arr:
+        prefix += x
+        # If prefix repeats or is zero, subarray sum = 0 exists
+        if prefix in seen:
+            return True
+        seen.add(prefix)
+    return False
+\end{minted}
+
+\noindent\textbf{Problem: Subarray with Xor = k}
+\begin{minted}[bgcolor=bgcolor5,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def has_xor_subarray(arr, k):
+    """
+    Check if any subarray's xor equals k.
+    Time Complexity: O(n)
+    """
+    seen = set([0])
+    prefix = 0
+    for x in arr:
+        prefix ^= x
+        # If prefix^k seen before, subarray xor = k exists
+        if (prefix ^ k) in seen:
+            return True
+        seen.add(prefix)
+    return False
+\end{minted}
+
+\noindent\textbf{Problem: Longest Subarray with Given Sum k}
+\begin{minted}[bgcolor=bgcolor6,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def longest_subarray_sum_k(arr, k):
+    """
+    Return length of longest subarray summing to k.
+    Time Complexity: O(n)
+    """
+    first_occ = {0: -1}  # prefix_sum -> first index
+    prefix = 0
+    max_len = 0
+    for i, x in enumerate(arr):
+        prefix += x
+        # Record first occurrence of this prefix
+        if prefix not in first_occ:
+            first_occ[prefix] = i
+        # Check if a subarray summing to k ends here
+        if (prefix - k) in first_occ:
+            length = i - first_occ[prefix - k]
+            max_len = max(max_len, length)
+    return max_len
+\end{minted}
+
+\noindent\textbf{Problem: Longest Subarray with Equal 0s and 1s}
+\begin{minted}[bgcolor=bgcolor7,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def longest_equal_01(arr):
+    """
+    Longest subarray with equal number of 0s and 1s.
+    Time Complexity: O(n)
+    """
+    # Replace 0 with -1, then find longest zero-sum subarray
+    mapped = [1 if x==1 else -1 for x in arr]
+    first_occ = {0: -1}
+    prefix = 0
+    max_len = 0
+    for i, x in enumerate(mapped):
+        prefix += x
+        if prefix not in first_occ:
+            first_occ[prefix] = i
+        max_len = max(max_len, i - first_occ[prefix])
+    return max_len
+\end{minted}
+
+\noindent\textbf{Problem: Longest Common Binary Subarray with Given Sum}
+\begin{minted}[bgcolor=bgcolor8,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+from typing import List, Tuple
+
+def longest_common_sum_subarray(a: List[int], b: List[int]) -> Tuple[int, List[int]]:
+    """
+    Finds the longest span over which the prefix sums of a and b are equal.
+    Returns (length, subarray_of_a).
+    """
+    n = min(len(a), len(b))
+    diff_to_idx = {0: -1}    # maps prefix‐sum diff → earliest index
+    diff = 0
+    best_len = 0
+    best_start = 0
+
+    for i in range(n):
+        # update running difference
+        diff += a[i] - b[i]
+
+        if diff in diff_to_idx:
+            # we’ve seen this diff before at index prev
+            prev = diff_to_idx[diff]
+            curr_len = i - prev
+            if curr_len > best_len:
+                best_len = curr_len
+                best_start = prev + 1
+        else:
+            # first time seeing this diff
+            diff_to_idx[diff] = i
+
+    # slice out the winner from a
+    return best_len, a[best_start : best_start + best_len]
+
+\end{minted}
+
+\noindent\textbf{Problem: Longest Consecutive Subsequence}
+\begin{minted}[bgcolor=bgcolor9,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def longest_consecutive(nums):
+    """
+    Length of the longest run of consecutive integers.
+    Time Complexity: O(n)
+    """
+    num_set = set(nums)
+    max_len = 0
+    for x in num_set:
+        # Only start at the beginning of a sequence
+        if x - 1 not in num_set:
+            curr = x
+            length = 1
+            while curr + 1 in num_set:
+                curr += 1
+                length += 1
+            max_len = max(max_len, length)
+    return max_len
+\end{minted}
+
+\noindent\textbf{Problem: Count Distinct Elements in Every Window}
+\begin{minted}[bgcolor=bgcolor10,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+def distinct_in_windows(arr, k):
+    """
+    Return list of distinct counts for every window of size k.
+    Time Complexity: O(n)
+    """
+    if k > len(arr): return []
+    freq = {}
+    distinct = []
+    # Initialize first window
+    for x in arr[:k]:
+        freq[x] = freq.get(x, 0) + 1
+    distinct.append(len(freq))
+    # Slide window
+    for i in range(k, len(arr)):
+        # Remove outgoing
+        out = arr[i-k]
+        freq[out] -= 1
+        if freq[out] == 0:
+            del freq[out]
+        # Add incoming
+        in_ = arr[i]
+        freq[in_] = freq.get(in_, 0) + 1
+        distinct.append(len(freq))
+    return distinct
+\end{minted}
+
+\noindent\textbf{Problem: More than n/k Occurrences in Array}
+\begin{minted}[bgcolor=bgcolor5,frame=lines,framesep=5mm,rulecolor=\color{black},linenos,numbersep=5pt,fontsize=\normalsize]{python}
+from typing import List, Any
+
+def more_than_n_over_k(arr: List[Any], k: int) -> List[Any]:
+    """
+    Return all elements in `arr` that appear more than len(arr)//k times.
+    Uses a Boyer–Moore–style majority‐vote generalization with at most k−1 candidates.
+    Time Complexity: O(n), Space Complexity: O(k)
+    """
+    n = len(arr)
+    if k < 2:
+        raise ValueError("k must be at least 2")
+
+    # 1) First pass: find up to (k−1) potential candidates
+    #    Maintain a map of candidate -> “vote count”
+    candidates = {}  # type: dict[Any, int]
+    for x in arr:
+        if x in candidates:
+            # increment count if x is already a candidate
+            candidates[x] += 1
+        elif len(candidates) < k - 1:
+            # room to add a new candidate
+            candidates[x] = 1
+        else:
+            # no room: decrement every candidate’s count
+            # if any count drops to zero, remove it
+            to_delete = []
+            for c in candidates:
+                candidates[c] -= 1
+                if candidates[c] == 0:
+                    to_delete.append(c)
+            for c in to_delete:
+                del candidates[c]
+
+    # 2) Second pass: verify actual frequencies of the remaining candidates
+    counts = {c: 0 for c in candidates}
+    for x in arr:
+        if x in counts:
+            counts[x] += 1
+
+    # 3) Collect those whose true count exceeds n//k
+    result = []
+    threshold = n // k
+    for c, cnt in counts.items():
+        if cnt > threshold:
+            result.append(c)
+
+    return result
+\end{minted}
+% \end{document}

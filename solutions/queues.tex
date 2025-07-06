@@ -1,0 +1,460 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Circular Queue Implementation
+\noindent\textbf{Problem: Circular Implementation of Queue}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class CircularQueue:
+    """
+    Circular queue implementation with fixed capacity.
+    Time Complexity: O(1) for all operations, Space Complexity: O(n)
+    """
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.queue = [None] * capacity
+        self.front = self.rear = -1
+        self.size = 0
+
+    def enqueue(self, value: int) -> bool:
+        if self.is_full():
+            return False
+            
+        if self.is_empty():
+            self.front = self.rear = 0
+        else:
+            self.rear = (self.rear + 1) % self.capacity
+            
+        self.queue[self.rear] = value
+        self.size += 1
+        return True
+
+    def dequeue(self) -> bool:
+        if self.is_empty():
+            return False
+            
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.capacity
+            
+        self.size -= 1
+        return True
+
+    def get_front(self) -> int:
+        return -1 if self.is_empty() else self.queue[self.front]
+
+    def get_rear(self) -> int:
+        return -1 if self.is_empty() else self.queue[self.rear]
+
+    def is_empty(self) -> bool:
+        return self.size == 0
+
+    def is_full(self) -> bool:
+        return self.size == self.capacity
+\end{minted}
+
+% Stack using Queue
+\noindent\textbf{Problem: Implementing Stack using Queue}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import deque
+
+class StackUsingQueue:
+    """
+    Stack implementation using two queues.
+    Time Complexity: 
+        Push: O(1), Pop: O(n), 
+        Top: O(1), Empty: O(1)
+    """
+    def __init__(self):
+        self.main = deque()
+        self.aux = deque()
+
+    def push(self, x: int) -> None:
+        self.main.append(x)
+
+    def pop(self) -> int:
+        # Move all except last to auxiliary queue
+        while len(self.main) > 1:
+            self.aux.append(self.main.popleft())
+        
+        # Remove and return last element
+        val = self.main.popleft()
+        
+        # Swap queues
+        self.main, self.aux = self.aux, self.main
+        return val
+
+    def top(self) -> int:
+        return self.main[-1] if self.main else -1
+
+    def empty(self) -> bool:
+        return len(self.main) == 0
+\end{minted}
+
+% Queue using Single Stack
+\noindent\textbf{Problem: Implementing Queue using Single Stack}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class QueueUsingStack:
+    """
+    Queue implementation using two stacks (single stack in interface).
+    Time Complexity: 
+        Enqueue: O(1), Dequeue: Amortized O(1)
+    """
+    def __init__(self):
+        self.in_stack = []
+        self.out_stack = []
+
+    def enqueue(self, x: int) -> None:
+        self.in_stack.append(x)
+
+    def dequeue(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+        return self.out_stack.pop() if self.out_stack else -1
+
+    def peek(self) -> int:
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+        return self.out_stack[-1] if self.out_stack else -1
+
+    def empty(self) -> bool:
+        return not self.in_stack and not self.out_stack
+\end{minted}
+
+% Reverse First K Elements of Queue
+\noindent\textbf{Problem: Reversing First K Elements of a Queue}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import deque
+
+def reverse_k(queue: deque, k: int) -> deque:
+    """
+    Reverses first k elements of a queue using stack.
+    Time Complexity: O(n), Space Complexity: O(k)
+    """
+    if k > len(queue) or k <= 0:
+        return queue
+        
+    stack = []
+    # Push first k elements to stack
+    for _ in range(k):
+        stack.append(queue.popleft())
+    
+    # Pop from stack to end of queue (reversed order)
+    while stack:
+        queue.append(stack.pop())
+    
+    # Move remaining elements to end
+    for _ in range(len(queue) - k):
+        queue.append(queue.popleft())
+        
+    return queue
+\end{minted}
+
+% Sliding Window Maximum
+\noindent\textbf{Problem: Sliding Window Maximum}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import deque
+
+def max_sliding_window(nums: List[int], k: int) -> List[int]:
+    """
+    Finds max in each sliding window using monotonic deque.
+    Time Complexity: O(n), Space Complexity: O(k)
+    """
+    dq = deque()
+    result = []
+    
+    for i in range(len(nums)):
+        # Remove indices outside current window
+        if dq and dq[0] == i - k:
+            dq.popleft()
+            
+        # Maintain decreasing order
+        while dq and nums[dq[-1]] < nums[i]:
+            dq.pop()
+            
+        dq.append(i)
+        
+        # Add to result once window size reached
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+    
+    return result
+\end{minted}
+
+% Generate Numbers with Given Digits
+\noindent\textbf{Problem: Generate Numbers with Given Digits Only}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import deque
+
+def generate_numbers(digits: List[int], n: int) -> List[int]:
+    """
+    Generates first n numbers containing only given digits.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    result = []
+    queue = deque()
+    # Start with each digit
+    for d in sorted(digits):
+        queue.append(d)
+    
+    count = 0
+    while queue and count < n:
+        num = queue.popleft()
+        result.append(num)
+        count += 1
+        
+        # Generate next numbers by appending digits
+        for d in sorted(digits):
+            new_num = num * 10 + d
+            queue.append(new_num)
+    
+    return result
+\end{minted}
+
+% Circular Deque Implementation
+\noindent\textbf{Problem: Circular Implementation of Deque}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class CircularDeque:
+    """
+    Circular deque implementation with O(1) operations.
+    Space Complexity: O(n)
+    """
+    def __init__(self, k: int):
+        self.capacity = k
+        self.deque = [None] * k
+        self.front = self.rear = -1
+        self.size = 0
+
+    def insert_front(self, value: int) -> bool:
+        if self.is_full():
+            return False
+            
+        if self.is_empty():
+            self.front = self.rear = 0
+        else:
+            self.front = (self.front - 1) % self.capacity
+            
+        self.deque[self.front] = value
+        self.size += 1
+        return True
+
+    def insert_last(self, value: int) -> bool:
+        if self.is_full():
+            return False
+            
+        if self.is_empty():
+            self.front = self.rear = 0
+        else:
+            self.rear = (self.rear + 1) % self.capacity
+            
+        self.deque[self.rear] = value
+        self.size += 1
+        return True
+
+    def delete_front(self) -> bool:
+        if self.is_empty():
+            return False
+            
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.capacity
+            
+        self.size -= 1
+        return True
+
+    def delete_last(self) -> bool:
+        if self.is_empty():
+            return False
+            
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.rear = (self.rear - 1) % self.capacity
+            
+        self.size -= 1
+        return True
+
+    def get_front(self) -> int:
+        return -1 if self.is_empty() else self.deque[self.front]
+
+    def get_rear(self) -> int:
+        return -1 if self.is_empty() else self.deque[self.rear]
+
+    def is_empty(self) -> bool:
+        return self.size == 0
+
+    def is_full(self) -> bool:
+        return self.size == self.capacity
+\end{minted}
+
+% Gas Station Problem
+\noindent\textbf{Problem: First Circular Tour (Gas Station Problem)}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def can_complete_circuit(gas: List[int], cost: List[int]) -> int:
+    """
+    Finds starting gas station index to complete circular tour.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    total_tank = current_tank = start = 0
+    
+    for i in range(len(gas)):
+        total_tank += gas[i] - cost[i]
+        current_tank += gas[i] - cost[i]
+        
+        # If current tank negative, reset from next station
+        if current_tank < 0:
+            start = i + 1
+            current_tank = 0
+    
+    return start if total_tank >= 0 else -1
+\end{minted}
+
+% Min-Max Data Structure
+\noindent\textbf{Problem: Design a Data Structure with Min and Max}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import deque
+
+class MinMaxDeque:
+    """
+    Deque that supports O(1) min/max operations using auxiliary deques.
+    Time Complexity: All operations O(1) amortized.
+    """
+    def __init__(self):
+        self.main = deque()
+        self.min_deque = deque()
+        self.max_deque = deque()
+
+    def append(self, x: int) -> None:
+        self.main.append(x)
+        # Maintain min deque (increasing)
+        while self.min_deque and self.min_deque[-1] > x:
+            self.min_deque.pop()
+        self.min_deque.append(x)
+        # Maintain max deque (decreasing)
+        while self.max_deque and self.max_deque[-1] < x:
+            self.max_deque.pop()
+        self.max_deque.append(x)
+
+    def popleft(self) -> int:
+        if not self.main:
+            return -1
+        val = self.main.popleft()
+        if val == self.min_deque[0]:
+            self.min_deque.popleft()
+        if val == self.max_deque[0]:
+            self.max_deque.popleft()
+        return val
+
+    def pop(self) -> int:
+        if not self.main:
+            return -1
+        val = self.main.pop()
+        if val == self.min_deque[-1]:
+            self.min_deque.pop()
+        if val == self.max_deque[-1]:
+            self.max_deque.pop()
+        return val
+
+    def get_min(self) -> int:
+        return self.min_deque[0] if self.min_deque else -1
+
+    def get_max(self) -> int:
+        return self.max_deque[0] if self.max_deque else -1
+\end{minted}
+
+% \end{document}

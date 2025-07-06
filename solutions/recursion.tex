@@ -1,0 +1,252 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Palindrome Check (Recursion)
+\noindent\textbf{Problem: Palindrome Check (Recursion)}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def is_palindrome(s: str, start: int, end: int) -> bool:
+    """
+    Checks if substring s[start:end+1] is palindrome using recursion.
+    Time Complexity: O(n), Space Complexity: O(n) for recursion stack.
+    """
+    if start >= end:
+        return True
+    if s[start] != s[end]:
+        return False
+    return is_palindrome(s, start+1, end-1)
+\end{minted}
+
+% Count Set Bits from 1 to N
+\noindent\textbf{Problem: Count Set Bits from 1 to N}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def count_set_bits(n: int) -> int:
+    """
+    Counts total set bits in all numbers from 1 to n using bit patterns.
+    Time Complexity: O(log n), Space Complexity: O(1)
+    """
+    if n <= 0:
+        return 0
+        
+    # Find highest power of 2 <= n
+    x = 0
+    while (1 << x) <= n:
+        x += 1
+    x -= 1
+    
+    # Calculate total set bits
+    bits_till_2x = x * (1 << (x-1))
+    msb_after_2x = n - (1 << x) + 1
+    rest = n - (1 << x)
+    return bits_till_2x + msb_after_2x + count_set_bits(rest)
+\end{minted}
+
+% Rope Cutting Problem
+\noindent\textbf{Problem: Rope Cutting Problem}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def max_rope_cuts(n: int, a: int, b: int, c: int) -> int:
+    """
+    Maximizes number of rope cuts of lengths a, b, c from rope of length n.
+    Time Complexity: O(3^n), Space Complexity: O(n) for recursion stack.
+    """
+    if n == 0:
+        return 0
+    if n < 0:
+        return -1
+        
+    res = max(
+        max_rope_cuts(n-a, a, b, c),
+        max_rope_cuts(n-b, a, b, c),
+        max_rope_cuts(n-c, a, b, c)
+    )
+    
+    return res + 1 if res >= 0 else -1
+\end{minted}
+
+% Generate Subsets
+\noindent\textbf{Problem: Generate Subsets}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def generate_subsets(nums: List[int]) -> List[List[int]]:
+    """
+    Generates all subsets of given list using recursion.
+    Time Complexity: O(2^n), Space Complexity: O(n) for recursion stack.
+    """
+    def backtrack(start, path):
+        result.append(path[:])
+        #   For each choice of next element…
+        for i in range(start, len(nums)):
+            #    a) INCLUDE nums[i]
+            path.append(nums[i])
+            backtrack(i+1, path)
+            #    b) EXCLUDE nums[i] (undo include)
+            path.pop()
+    ##############################ALTERNATE###########################
+    def backtrack(idx, path):
+        if idx == len(nums):
+            result.append(path[:])
+            return
+        # exclude nums[idx]
+        helper(idx+1, path)
+        # include nums[idx]
+        path.append(nums[idx])
+        helper(idx+1, path)
+        path.pop()
+
+            
+    result = []
+    backtrack(0, [])
+    return result
+\end{minted}
+
+% Subset Sum (Recursive)
+\noindent\textbf{Problem: Number of Subsets with Given Sum (Recursive)}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def subset_sum_count(nums: List[int], target: int) -> int:
+    """
+    Counts number of subsets that sum to target (recursive).
+    Time Complexity: O(2^n), Space Complexity: O(n) for recursion stack.
+    """
+    def helper(i, current_sum):
+        if current_sum == target:
+            return 1
+        if i == len(nums) or current_sum > target:
+            return 0
+        return helper(i+1, current_sum + nums[i]) + helper(i+1, current_sum)
+        
+    return helper(0, 0)
+\end{minted}
+
+% Tower of Hanoi
+\noindent\textbf{Problem: Tower of Hanoi}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def tower_of_hanoi(n: int, source: str, auxiliary: str, destination: str) -> None:
+    """
+    Prints steps to solve Tower of Hanoi problem.
+    Time Complexity: O(2^n), Space Complexity: O(n) for recursion stack.
+    """
+    if n == 1:
+        print(f"Move disk 1 from {source} to {destination}")
+        return
+    tower_of_hanoi(n-1, source, destination, auxiliary)
+    print(f"Move disk {n} from {source} to {destination}")
+    tower_of_hanoi(n-1, auxiliary, source, destination)
+\end{minted}
+
+% Josephus Problem
+\noindent\textbf{Problem: Josephus Problem}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def josephus(n: int, k: int) -> int:
+    """
+    Finds last remaining person in Josephus circle.
+    Time Complexity: O(n), Space Complexity: O(n) for recursion stack.
+    """
+    if n == 1:
+        return 1
+    return (josephus(n-1, k) + k-1) % n + 1
+\end{minted}
+
+% Print All Permutations
+\noindent\textbf{Problem: Printing All Permutations}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def permute(nums: List[int]) -> List[List[int]]:
+    """
+    Generates all permutations of given list.
+    Time Complexity: O(n!), Space Complexity: O(n) for recursion stack.
+    """
+    def backtrack(start):
+        if start == len(nums):
+            result.append(nums[:])
+            return
+        for i in range(start, len(nums)):
+            nums[start], nums[i] = nums[i], nums[start]
+            backtrack(start+1)
+            nums[start], nums[i] = nums[i], nums[start]
+            
+    result = []
+    backtrack(0)
+    return result
+\end{minted}
+% \end{document}

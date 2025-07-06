@@ -1,0 +1,916 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+
+% Insert at Given Position
+\noindent\textbf{Problem: Insert at Given Position in Singly Linked List}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def insert_at_position(head: ListNode, pos: int, val: int) -> ListNode:
+    """
+    Inserts a new node at given position (1-indexed) in a linked list.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    dummy = ListNode(0, head)
+    curr = dummy
+    
+    # Traverse to position-1 node
+    for _ in range(pos - 1):
+        if not curr:
+            return head
+        curr = curr.next
+    
+    # Insert new node
+    new_node = ListNode(val)
+    new_node.next = curr.next
+    curr.next = new_node
+    
+    return dummy.next
+\end{minted}
+
+% Reverse Doubly Linked List
+\noindent\textbf{Problem: Reverse a Doubly Linked List}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class Node:
+    def __init__(self, val=0, prev=None, next=None):
+        self.val = val
+        self.prev = prev
+        self.next = next
+
+def reverse_dll(head: Node) -> Node:
+    """
+    Reverses a doubly linked list in-place.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    current = head
+    prev = None
+    
+    while current:
+        # Swap next and prev pointers
+        next_node = current.next
+        current.next = prev
+        current.prev = next_node
+        
+        # Move pointers forward
+        prev = current
+        current = next_node
+    
+    return prev
+\end{minted}
+% Detect and Remove Loop
+\noindent\textbf{Problem: Detect and Remove Loop in Linked List}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def detect_and_remove_cycle(head: ListNode) -> None:
+    """
+    Detects and removes cycle in linked list.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    slow = fast = head
+    
+    # Find meeting point
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            break
+    else:
+        return  # No cycle
+    
+    # Find cycle start
+    ptr1 = head
+    ptr2 = slow
+    while ptr1 != ptr2:
+        ptr1 = ptr1.next
+        ptr2 = ptr2.next
+    
+    # Find last node of cycle
+    while ptr2.next != ptr1:
+        ptr2 = ptr2.next
+    
+    # Break the cycle
+    ptr2.next = None
+\end{minted}
+
+% Intersection Point
+\noindent\textbf{Problem: Find Intersection Point of Two Linked Lists}\\
+Here’s the intuition behind the two-pointer “switch heads” trick:
+
+1. Equalizing total travel  
+   - Suppose List A is length m, List B is length n, and they intersect after k nodes (so the shared tail is length k).  
+   - Pointer p1 walks A then B, so it travels m + n steps.  
+   - Pointer p2 walks B then A, so it also travels n + m steps.  
+   After those m+n steps they’ve each covered exactly the same total distance—so if there’s an intersection, they’ll land on it at the same time. If there isn’t one, they’ll both hit the end (`None`) together.
+
+2. Step-by-step with an example  
+   Let A = [1 → 2 → 3   8 → 9]  
+       B = [4 → 5 → 6      8 ]  
+   Intersection at value 8.  
+   
+   p1 path:  
+   1 → 2 → 3 → 8 → 9 → None → 4 → 5 → 6 → 8 → …  \\
+   p2 path:  
+   4 → 5 → 6 → 8 → 9 → None → 1 → 2 → 3 → 8 → …  
+
+
+3. No‐intersection case  
+   If the lists don’t intersect, both pointers still walk exactly m+n nodes and then both become `None`. The loop `while p1 != p2` breaks and you return `None`.
+
+ASCII timeline (indexes = steps):
+
+   Step:   1  2  3  4  5  6  7  8  9 10  
+   p1:     1 → 2 → 3 → 8 → 9 → — → 4 → 5 → 6 → 8  
+   p2:     4 → 5 → 6 → 8 → 9 → — → 1 → 2 → 3 → 8  
+
+Key takeaway: by swapping heads when you hit the end, you “sync up” the extra length of the longer list so both pointers cover identical distances and therefore meet at the intersection (or both end up `None`).
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def get_intersection_node(headA: ListNode, headB: ListNode) -> ListNode:
+    """
+    Finds intersection node of two linked lists.
+    Time Complexity: O(m+n), Space Complexity: O(1)
+    """
+    p1, p2 = headA, headB
+    while p1 != p2:
+        p1 = p1.next if p1 else headB
+        p2 = p2.next if p2 else headA
+        # After at most m+n steps, they either meet at the intersection node
+        # or both become None (no intersection)
+
+    # Return the intersection node or None
+    return p1
+\end{minted}
+
+% Middle of Linked List
+\noindent\textbf{Problem: Middle of Linked List}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def middle_node(head: ListNode) -> ListNode:
+    """
+    Finds middle node of linked list using slow-fast pointers.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
+\end{minted}
+
+% Nth Node from End
+\noindent\textbf{Problem: Nth Node from End of Linked List}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def remove_nth_from_end(head: ListNode, n: int) -> ListNode:
+    """
+    Removes nth node from end using two pointers.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    dummy = ListNode(0, head)
+    fast = slow = dummy
+    
+    # Advance fast by n+1 steps
+    for _ in range(n + 1):
+        fast = fast.next
+    
+    # Move both until fast reaches end
+    while fast:
+        slow = slow.next
+        fast = fast.next
+    
+    # Remove nth node
+    slow.next = slow.next.next
+    return dummy.next
+\end{minted}
+
+% Reverse in Groups of k
+\noindent\textbf{Problem: Reverse Linked List in Groups of k}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def reverse_k_group(head: ListNode, k: int) -> ListNode:
+    """
+    Reverses linked list in groups of k nodes.
+    Time Complexity: O(n), Space Complexity: O(n/k)
+    """
+    # Count nodes in current group
+    count = 0
+    curr = head
+    while curr and count < k:
+        curr = curr.next
+        count += 1
+    
+    # Base case: not enough nodes
+    if count < k:
+        return head
+    
+    # Reverse current group
+    prev, curr = None, head
+    for _ in range(k):
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    
+    # Recursively reverse remaining
+    head.next = reverse_k_group(curr, k)
+    return prev
+\end{minted}
+
+% Delete Node with Only Pointer
+\noindent\textbf{Problem: Delete Node with Only Pointer to It}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def delete_node(node: ListNode) -> None:
+    """
+    Deletes node given only pointer to that node.
+    Time Complexity: O(1), Space Complexity: O(1)
+    """
+    node.val = node.next.val
+    node.next = node.next.next
+\end{minted}
+
+% Segregate Even and Odd Nodes
+\noindent\textbf{Problem: Segregate Even and Odd Nodes}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def odd_even_list(head: ListNode) -> ListNode:
+    """
+    Groups all odd nodes followed by even nodes.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    if not head:
+        return None
+    
+    odd = head
+    even = even_head = head.next
+    
+    while even and even.next:
+        odd.next = even.next
+        odd = odd.next
+        even.next = odd.next
+        even = even.next
+    
+    odd.next = even_head
+    return head
+#######################################SEGREGATING################################
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def segregate_by_value(head: ListNode) -> ListNode:
+    """
+    Rearranges a singly-linked list so that all nodes with odd values
+    come before all nodes with even values. Relative order within the
+    odd group and even group is preserved.
+
+    Time Complexity: O(n) — single traversal
+    Space Complexity: O(1) — only a few pointers
+    """
+    if not head:
+        return None
+
+    # Create two dummy heads to build odd-valued and even-valued lists
+    odd_dummy = ListNode(0)
+    even_dummy = ListNode(0)
+
+    odd_tail = odd_dummy    # tail pointer for odd list
+    even_tail = even_dummy  # tail pointer for even list
+    curr = head             # iterator
+
+    while curr:
+        nxt = curr.next     # save next, since we may rewire curr.next
+        curr.next = None    # detach curr from original chain
+
+        if curr.val & 1:    # odd check: (val % 2 == 1)
+            odd_tail.next = curr
+            odd_tail = curr
+        else:               # even
+            even_tail.next = curr
+            even_tail = curr
+
+        curr = nxt          # move on
+
+    # concatenate odd-list with even-list
+    odd_tail.next = even_dummy.next
+    # (even_tail.next is already None)
+    # if there were any odd nodes, that's the new head;
+    # otherwise, fall back to the even list directly.
+    return odd_dummy.next or even_dummy.next
+
+    
+\end{minted}
+
+% Pairwise Swap Nodes
+\noindent\textbf{Problem: Pairwise Swap Nodes of Linked List}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def swap_pairs(head: ListNode) -> ListNode:
+    """
+    Swaps every two adjacent nodes.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    dummy = ListNode(0, head)
+    prev = dummy
+    
+    while head and head.next:
+        # Nodes to swap
+        first = head
+        second = head.next
+        
+        # Swap nodes
+        prev.next = second
+        first.next = second.next
+        second.next = first
+        
+        # Move pointers
+        prev = first
+        head = first.next
+    
+    return dummy.next
+\end{minted}
+
+% Clone with Random Pointer
+\noindent\textbf{Problem: Clone a Linked List with Random Pointer}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class Node:
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
+        self.val = x
+        self.next = next
+        self.random = random
+def copy_random_list(head: 'Node') -> 'Node':
+    """
+    Deep copies linked list with random pointers using O(n) space.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    if not head:
+        return None
+    
+    # Create mapping: original -> clone
+    mapping = {}
+    curr = head
+    while curr:
+        mapping[curr] = Node(curr.val)
+        curr = curr.next
+    
+    # Set next and random pointers
+    curr = head
+    while curr:
+        clone = mapping[curr]
+        clone.next = mapping.get(curr.next)
+        clone.random = mapping.get(curr.random)
+        curr = curr.next
+    
+    return mapping[head]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~WEAVING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    def copy_random_list(head: 'Node') -> 'Node':
+    """
+    Deep-copy a linked list where each node has a `next` and a `random` pointer.
+    Achieves O(n) time and O(1) extra space by weaving the copied nodes
+    into the original list, then unweaving.
+    """
+    if not head:
+        return None
+
+    # 1) Weave copy nodes into original list
+    #    For each original node O, insert its copy C right after it:
+    #    O -> C -> O.next_original
+    curr = head
+    while curr:
+        copy = Node(curr.val)
+        copy.next = curr.next
+        curr.next = copy
+        curr = copy.next
+
+    # 2) Assign random pointers for each copy node
+    #    If original O.random points to R, then O.next (the copy)
+    #    should have random = R.next (the copy of R).
+    curr = head
+    while curr:
+        copy = curr.next
+        copy.random = curr.random.next if curr.random else None
+        curr = copy.next
+
+    # 3) Unweave the two lists: restore originals, extract copies
+    orig = head
+    copy_head = head.next
+    while orig:
+        copy = orig.next
+        orig.next = copy.next              # restore original next
+        copy.next = copy.next.next if copy.next else None
+        orig = orig.next
+
+    return copy_head
+\end{minted}
+
+% LRU Cache Design
+\noindent\textbf{Problem: LRU Cache Design}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class ListNode:
+    def __init__(self, key=0, val=0, prev=None, next=None):
+        self.key = key
+        self.val = val
+        self.prev = prev
+        self.next = next
+
+class LRUCache:
+    """
+    LRU Cache implementation using doubly linked list and hashmap.
+    Time Complexity: O(1) per operation, Space Complexity: O(capacity)
+    """
+    def __init__(self, capacity: int):
+        self.cap = capacity
+        self.cache = {}
+        self.head = ListNode()
+        self.tail = ListNode()
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def _add_node(self, node):
+        # Add after head
+        node.prev = self.head
+        node.next = self.head.next
+        self.head.next.prev = node
+        self.head.next = node
+
+    def _remove_node(self, node):
+        # Remove from any position
+        prev = node.prev
+        nxt = node.next
+        prev.next = nxt
+        nxt.prev = prev
+
+    def _move_to_front(self, node):
+        self._remove_node(node)
+        self._add_node(node)
+
+    def get(self, key: int) -> int:
+        if key in self.cache:
+            node = self.cache[key]
+            self._move_to_front(node)
+            return node.val
+        return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            node = self.cache[key]
+            node.val = value
+            self._move_to_front(node)
+        else:
+            if len(self.cache) == self.cap:
+                # Evict LRU
+                lru = self.tail.prev
+                self._remove_node(lru)
+                del self.cache[lru.key]
+            
+            # Add new node
+            new_node = ListNode(key, value)
+            self.cache[key] = new_node
+            self._add_node(new_node)
+\end{minted}
+
+% Merge Two Sorted Lists
+\noindent\textbf{Problem: Merge Two Sorted Linked Lists}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def merge_two_lists(l1: ListNode, l2: ListNode) -> ListNode:
+    """
+    Merges two sorted linked lists iteratively.
+    Time Complexity: O(m+n), Space Complexity: O(1)
+    """
+    dummy = ListNode()
+    curr = dummy
+    
+    while l1 and l2:
+        if l1.val <= l2.val:
+            curr.next = l1
+            l1 = l1.next
+        else:
+            curr.next = l2
+            l2 = l2.next
+        curr = curr.next
+    
+    curr.next = l1 if l1 else l2
+    return dummy.next
+\end{minted}
+
+% Palindrome Linked List
+\noindent\textbf{Problem: Palindrome Linked List}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def is_palindrome(head: ListNode) -> bool:
+    """
+    Checks if linked list is palindrome using O(1) space.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    # Find middle
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    
+    # Reverse second half
+    prev = None
+    while slow:
+        nxt = slow.next
+        slow.next = prev
+        prev = slow
+        slow = nxt
+    
+    # Compare halves
+    left, right = head, prev
+    while right:
+        if left.val != right.val:
+            return False
+        left = left.next
+        right = right.next
+    return True
+\end{minted}
+
+% Add One to Linked List
+\noindent\textbf{Problem: Add One to Linked List}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def add_one(head: ListNode) -> ListNode:
+    """
+    Adds 1 to number represented as linked list (MSD first).
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    # Reverse list (to LSD first)
+    prev, curr = None, head
+    while curr:
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    
+    # Add one with carry
+    curr = prev
+    carry = 1
+    while curr and carry:
+        total = curr.val + carry
+        curr.val = total % 10
+        carry = total // 10
+        if not curr.next and carry:
+            curr.next = ListNode(0)
+        curr = curr.next
+    
+    # Reverse back
+    new_head = None
+    while prev:
+        nxt = prev.next
+        prev.next = new_head
+        new_head = prev
+        prev = nxt
+    
+    return new_head
+##############################################################
+def addTwoNumbers(l1, l2):
+    # Step 1: Reverse both lists
+    l1 = reverse_list(l1)
+    l2 = reverse_list(l2)
+
+    carry = 0
+    dummy = ListNode(0)
+    current = dummy
+
+    # Step 2: Add digits with carry
+    while l1 or l2 or carry:
+        sum_val = carry
+        if l1:
+            sum_val += l1.val
+            l1 = l1.next
+        if l2:
+            sum_val += l2.val
+            l2 = l2.next
+
+        carry = sum_val // 10
+        current.next = ListNode(sum_val % 10)
+        current = current.next
+
+    # Step 3: Reverse the result to restore forward order
+    return reverse_list(dummy.next)
+\end{minted}
+
+% Rotate Linked List by K
+\noindent\textbf{Problem: Rotate Linked List by K}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def rotate_right(head: ListNode, k: int) -> ListNode:
+    """
+    Rotates linked list to the right by k places.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    if not head or not head.next or k == 0:
+        return head
+    
+    # Get length and find tail
+    n = 1
+    tail = head
+    while tail.next:
+        tail = tail.next
+        n += 1
+    
+    # Adjust k
+    k %= n
+    if k == 0:
+        return head
+    
+    # Find new tail (n-k-1 steps from head)
+    new_tail = head
+    for _ in range(n - k - 1):
+        new_tail = new_tail.next
+    
+    # Reconnect nodes
+    new_head = new_tail.next
+    new_tail.next = None
+    tail.next = head
+    
+    return new_head
+\end{minted}
+
+% Flatten a Linked List
+\noindent\textbf{Problem: Flatten a Linked List}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class Node:
+    def __init__(self, val=0, next=None, child=None):
+        self.val = val
+        self.next = next
+        self.child = child
+
+def flatten(head: 'Node') -> 'Node':
+    """
+    Flattens multilevel doubly linked list depth-first.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    curr = head
+    while curr:
+        # If node has child, merge child list
+        if curr.child:
+            nxt = curr.next
+            child_head = flatten(curr.child)
+            curr.child = None
+            
+            # Connect current to child head
+            curr.next = child_head
+            child_head.prev = curr
+            
+            # Find tail of child list
+            tail = child_head
+            while tail.next:
+                tail = tail.next
+                
+            # Connect child tail to next node
+            tail.next = nxt
+            if nxt:
+                nxt.prev = tail
+                
+        curr = curr.next
+        
+    return head
+\end{minted}
+
+% LFU Cache Design
+\noindent\textbf{Problem: LFU Cache Design}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class Node:
+    def __init__(self, key=0, value=0, freq=0, prev=None, next=None):
+        self.key = key
+        self.value = value
+        self.freq = freq
+        self.prev = prev
+        self.next = next
+
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = Node()
+        self.tail = Node()
+        self.head.next = self.tail
+        self.tail.prev = self.head
+        self.size = 0
+
+    def add_node(self, node):
+        node.next = self.head.next
+        node.prev = self.head
+        self.head.next.prev = node
+        self.head.next = node
+        self.size += 1
+
+    def remove_node(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        self.size -= 1
+
+    def remove_last(self):
+        last = self.tail.prev
+        self.remove_node(last)
+        return last
+
+class LFUCache:
+    """
+    LFU Cache implementation using frequency dictionaries and doubly linked lists.
+    Time Complexity: O(1) per operation, Space Complexity: O(capacity)
+    """
+    def __init__(self, capacity: int):
+        self.cap = capacity
+        self.min_freq = 0
+        self.key_map = {}  # key:node
+        self.freq_map = defaultdict(DoublyLinkedList)  # freq:list
+
+    def _update_node(self, node):
+        freq = node.freq
+        self.freq_map[freq].remove_node(node)
+        
+        if self.min_freq == freq and self.freq_map[freq].size == 0:
+            self.min_freq += 1
+        
+        node.freq += 1
+        self.freq_map[node.freq].add_node(node)
+
+    def get(self, key: int) -> int:
+        if key not in self.key_map:
+            return -1
+        
+        node = self.key_map[key]
+        self._update_node(node)
+        return node.value
+
+    def put(self, key: int, value: int) -> None:
+        if self.cap == 0:
+            return
+            
+        if key in self.key_map:
+            node = self.key_map[key]
+            node.value = value
+            self._update_node(node)
+        else:
+            if len(self.key_map) == self.cap:
+                # Evict LFU (and LRU if tie)
+                node = self.freq_map[self.min_freq].remove_last()
+                del self.key_map[node.key]
+            
+            # Add new node
+            new_node = Node(key, value, 1)
+            self.key_map[key] = new_node
+            self.freq_map[1].add_node(new_node)
+            self.min_freq = 1
+\end{minted}
+
+% \end{document}

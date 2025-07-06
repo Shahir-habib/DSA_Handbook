@@ -1,0 +1,800 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{Binary Search Based Problems Codes}
+
+\noindent\textbf{Problem: Ternary Search}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def ternary_search(f: Callable[float, float], left: float, right: float, iterations: int = 100) -> float:
+    """
+    Performs ternary search to find the minimum (or maximum) of a unimodal function
+    f within a given range [left, right].
+    Time Complexity: O(log N)
+    """
+    for _ in range(iterations):
+        # Divide the interval into three parts
+        m1 = left + (right - left) / 3
+        m2 = right - (right - left) / 3
+
+        # Compare function values at m1 and m2
+        if f(m1) < f(m2):
+            # Minimum is in the left two-thirds
+            right = m2
+        else:
+            # Minimum is in the right two-thirds
+            left = m1
+    return (left + right) / 2
+\end{minted}
+
+\noindent\textbf{Problem: Jump Search}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def jump_search(arr: List[int], x: int) -> int:
+    """
+    Searches for an element x in a sorted array using Jump Search.
+    Time Complexity: O(sqrt(n))
+    """
+    n = len(arr)
+    # Find block size to jump
+    step = int(math.sqrt(n))
+
+    # Finding the block where element is present (if it is present)
+    prev = 0
+    while prev < n and arr[min(step, n) - 1] < x:
+        prev = step
+        step += int(math.sqrt(n))
+        if prev >= n:
+            return -1
+
+    # Doing a linear search for x in block beginning with prev.
+    while prev < n and arr[prev] < x:
+        prev += 1
+
+    # If element is found
+    if prev < n and arr[prev] == x:
+        return prev
+    return -1
+\end{minted}
+
+\noindent\textbf{Problem: Missing and Repeating Number}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_missing_repeating(nums: List[int]) -> Tuple[int, int]:
+    """
+    Finds the missing and repeating numbers in an array using XOR properties.
+    Assumes array contains numbers from 1 to n, with one repeating and one missing.
+    Time Complexity: O(n)
+    """
+    n = len(nums)
+    # XOR all array elements and numbers from 1 to n
+    xor_all = 0
+    for i in range(1, n + 1):
+        xor_all ^= i
+    for num in nums:
+        xor_all ^= num
+
+    # Find the rightmost set bit
+    set_bit = xor_all & -xor_all
+
+    # Divide numbers into two groups based on the set bit
+    # x: numbers with set bit, y: numbers without set bit
+    x, y = 0, 0
+    for i in range(1, n + 1):
+        if (i & set_bit) != 0:
+            x ^= i
+        else:
+            y ^= i
+    for num in nums:
+        if (num & set_bit) != 0:
+            x ^= num
+        else:
+            y ^= num
+
+    # Check which one is repeating and which is missing
+    if x in nums:
+        return x, y  # x is repeating, y is missing
+    return y, x      # y is repeating, x is missing
+\end{minted}
+
+\noindent\textbf{Problem: Find Peak Element in Unsorted Array}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_peak_element(nums: List[int]) -> int:
+    """
+    Finds a peak element in an array using binary search.
+    A peak element is an element that is strictly greater than its neighbours.
+    Time Complexity: O(log n)
+    """
+    n = len(nums)
+    left, right = 0, n - 1
+
+    while left < right:
+        mid = left + (right - left) // 2
+        if nums[mid] > nums[mid + 1]:
+            # Peak is in the left half including mid
+            right = mid
+        else:
+            # Peak is in the right half excluding mid
+            left = mid + 1
+    return left # left or right, they will converge to the peak index
+\end{minted}
+
+\noindent\textbf{Problem: Search in an Infinite Sized Array}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+# Assume ArrayReader is a class that allows accessing elements,
+# but its size is unknown (infinite). It returns -1 for out-of-bounds.
+class ArrayReader:
+    def __init__(self, arr: List[int]):
+        self.arr = arr
+
+    def get(self, index: int) -> int:
+        if index < len(self.arr):
+            return self.arr[index]
+        return 2**31 - 1 # Represents a very large number for "infinity"
+
+def search_in_infinite_array(reader: ArrayReader, target: int) -> int:
+    """
+    Searches for a target in an effectively infinite sorted array.
+    Time Complexity: O(log n)
+    """
+    # Exponentially increase bounds
+    left, right = 0, 1
+    while reader.get(right) < target:
+        left = right
+        right *= 2
+
+    # Perform binary search within the found bounds
+    while left <= right:
+        mid = left + (right - left) // 2
+        mid_val = reader.get(mid)
+        if mid_val == target:
+            return mid
+        elif mid_val < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+\end{minted}
+
+\noindent\textbf{Problem: Median of Two Sorted Arrays}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_kth_element_in_two_sorted_arrays(nums1: List[int], nums2: List[int], k: int) -> int:
+    """
+    Finds the k-th smallest element in two sorted arrays.
+    Time Complexity: O(log(min(len(nums1), len(nums2))))
+    """
+    n1, n2 = len(nums1), len(nums2)
+
+    # Ensure nums1 is the shorter array for efficiency
+    if n1 > n2:
+        return find_kth_element_in_two_sorted_arrays(nums2, nums1, k)
+
+    # Base cases
+    if n1 == 0:
+        return nums2[k - 1]
+    if k == 1:
+        return min(nums1[0], nums2[0])
+
+    # Divide k into two parts
+    i = min(k // 2, n1) # Take k/2 from nums1, or all if k/2 is too much
+    j = k - i           # Take remaining from nums2
+
+    if nums1[i - 1] < nums2[j - 1]:
+        # Discard first i elements from nums1
+        return find_kth_element_in_two_sorted_arrays(nums1[i:], nums2, k - i)
+    else:
+        # Discard first j elements from nums2
+        return find_kth_element_in_two_sorted_arrays(nums1, nums2[j:], k - j)
+
+def find_median_sorted_arrays(nums1: List[int], nums2: List[int]) -> float:
+    """
+    Finds the median of two sorted arrays.
+    Time Complexity: O(log(min(len(nums1), len(nums2))))
+    """
+    n = len(nums1) + len(nums2)
+    if n % 2 == 1:
+        # Odd total length: median is the (n//2 + 1)-th element
+        return find_kth_element_in_two_sorted_arrays(nums1, nums2, n // 2 + 1)
+    else:
+        # Even total length: median is average of (n//2)-th and (n//2 + 1)-th elements
+        mid1 = find_kth_element_in_two_sorted_arrays(nums1, nums2, n // 2)
+        mid2 = find_kth_element_in_two_sorted_arrays(nums1, nums2, n // 2 + 1)
+        return (mid1 + mid2) / 2.0
+\end{minted}
+
+\noindent\textbf{Problem: Search in Sorted Rotated Array}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def search_rotated_array(nums: List[int], target: int) -> int:
+    """
+    Searches for a target value in a sorted and rotated array.
+    Time Complexity: O(log n)
+    """
+    left, right = 0, len(nums) - 1
+
+    while left <= right:
+        mid = left + (right - left) // 2
+
+        if nums[mid] == target:
+            return mid
+
+        # Determine which half is sorted
+        if nums[left] <= nums[mid]: # Left half is sorted
+            if nums[left] <= target < nums[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else: # Right half is sorted
+            if nums[mid] < target <= nums[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return -1
+\end{minted}
+
+\noindent\textbf{Problem: Find Triplet with Given Sum (sorted)}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_triplets_with_sum(nums: List[int], target: int) -> List[Tuple[int, int, int]]:
+    """
+    Finds all unique triplets in the array that sum up to the target.
+    The array is first sorted.
+    Time Complexity: O(n^2)
+    """
+    nums.sort() # Sort the array first
+    n = len(nums)
+    result = []
+
+    for i in range(n - 2):
+        # Skip duplicate elements for `i`
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+
+        left, right = i + 1, n - 1
+        while left < right:
+            current_sum = nums[i] + nums[left] + nums[right]
+            if current_sum == target:
+                result.append((nums[i], nums[left], nums[right]))
+                # Skip duplicate elements for `left` and `right`
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+                left += 1
+                right -= 1
+            elif current_sum < target:
+                left += 1
+            else:
+                right -= 1
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: One Repeating Element in Array from 1 to N (size N)}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_one_repeating_element_floyd(nums: List[int]) -> int:
+    """
+    Finds the one repeating element in an array of n+1 integers where
+    each integer is in the range [1, n] using Floyd's Cycle Detection.
+    Time Complexity: O(n)
+    Space Complexity: O(1)
+    """
+    # Assuming numbers are 1-indexed for the 'linked list' interpretation
+    # nums[i] points to nums[nums[i]]
+    
+    # Phase 1: Find the intersection point of the two pointers
+    slow = nums[0]
+    fast = nums[nums[0]]
+
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+
+    # Phase 2: Find the entrance to the cycle
+    # (which is the repeating number)
+    slow = nums[0] # Reset slow to the start
+    while slow != fast:
+        slow = nums[slow]
+        fast = nums[fast]
+    
+    return slow # Both pointers now point to the repeating number
+\end{minted}
+
+\noindent\textbf{Problem: Multiple Repeating Elements in Array from 1 to N (size N)}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_multiple_repeating_elements(nums: List[int]) -> List[int]:
+    """
+    Finds multiple repeating elements in an array where numbers are from 1 to n.
+    Modifies the array in-place by negating elements to mark visited.
+    Time Complexity: O(n)
+    Space Complexity: O(1) (excluding result list)
+    """
+    repeating_elements = []
+    for i in range(len(nums)):
+        # Use absolute value as index (assuming numbers are positive)
+        index = abs(nums[i]) - 1
+        if nums[index] < 0:
+            # Already visited, so this number is a repeat
+            repeating_elements.append(abs(nums[i]))
+        else:
+            # Mark as visited by negating the value at the index
+            nums[index] = -nums[index]
+    
+    # Optional: restore array to original state if needed
+    # for i in range(len(nums)):
+    #     nums[i] = abs(nums[i])
+
+    return repeating_elements
+\end{minted}
+
+\noindent\textbf{Problem: Allocate Minimum Pages}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def allocate_minimum_pages(pages: List[int], num_students: int) -> int:
+    """
+    Allocates books to students such that the maximum pages assigned to a student is minimized.
+    Uses binary search on the answer space.
+    Time Complexity: O(N * log(Sum_of_Pages))
+    """
+
+    def is_possible_allocation(pages:List[int],num_students:int,max_pages_per_student: int)-> bool:
+        """
+        Helper function to check if it's possible to allocate books such that
+        no student gets more than max_pages_per_student.
+        """
+        students_needed = 1
+        current_pages_sum = 0
+        for book_pages in pages:
+            if book_pages > max_pages_per_student:
+                return False # A single book is larger than allowed max
+            if current_pages_sum + book_pages <= max_pages_per_student:
+                current_pages_sum += book_pages
+            else:
+                students_needed += 1
+                current_pages_sum = book_pages
+                if students_needed > num_students:
+                    return False
+        return True
+
+    
+    if num_students > len(pages):
+        return -1 # Not possible to assign at least one book to each student
+
+    low = max(pages) # Minimum possible answer is max pages of a single book
+    high = sum(pages) # Maximum possible answer is sum of all pages
+    result = high
+
+    while low <= high:
+        mid = low + (high - low) // 2
+        if is_possible_allocation(pages, num_students, mid):
+            result = mid
+            high = mid - 1 # Try to find a smaller maximum
+        else:
+            low = mid + 1 # Need to increase the maximum allowed pages
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: Minimum Days to Make n Bouquets}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def can_make_bouquets(bloom_days: List[int], k_fl_per_b: int, m_bouq: int, day: int) -> bool:
+    """
+    Helper function to check if 'm_bouq' can be made by 'day'.
+    """
+    bouquets_made = 0
+    flowers_collected = 0
+    for bloom_day in bloom_days:
+        if bloom_day <= day:
+            flowers_collected += 1
+            if flowers_collected == k_fl_per_b:
+                bouquets_made += 1
+                flowers_collected = 0 # Reset for next bouquet
+        else:
+            flowers_collected = 0 # Reset if a non-bloomed flower breaks sequence
+    return bouquets_made >= m_bouq
+
+def min_days_to_make_bouquets(bloom_days: List[int], k: int, m: int) -> int:
+    """
+    Finds the minimum number of days to make 'm' bouquets,
+    where each bouquet requires 'k' adjacent flowers.
+    Uses binary search on the possible range of days.
+    Time Complexity: O(N * log(max_day - min_day))
+    """
+    if m * k > len(bloom_days):
+        return -1 # Not enough flowers in total
+
+    low, high = min(bloom_days), max(bloom_days)
+    result = -1
+
+    while low <= high:
+        mid_day = low + (high - low) // 2
+        if can_make_bouquets(bloom_days, k, m, mid_day):
+            result = mid_day
+            high = mid_day - 1 # Try for an earlier day
+        else:
+            low = mid_day + 1 # Need more days
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: Capacity to Ship Packages in D Days}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def can_ship_packages(weights: List[int], max_capacity: int, days_limit: int) -> bool:
+    """
+    Helper function to check if all packages can be shipped within 'days_limit'
+    with a given 'max_capacity' per day.
+    """
+    current_day = 1
+    current_weight = 0
+    for weight in weights:
+        if weight > max_capacity:
+            return False # A single package is too heavy
+        if current_weight + weight <= max_capacity:
+            current_weight += weight
+        else:
+            current_day += 1
+            current_weight = weight
+    return current_day <= days_limit
+
+def capacity_to_ship_packages(weights: List[int], D: int) -> int:
+    """
+    Finds the minimum ship capacity required to ship all packages within D days.
+    Uses binary search on the possible range of capacities.
+    Time Complexity: O(N * log(Sum_of_Weights))
+    """
+    low = max(weights) # Minimum possible capacity is the heaviest package
+    high = sum(weights) # Maximum possible capacity is sum of all packages
+    result = high
+
+    while low <= high:
+        mid_capacity = low + (high - low) // 2
+        if can_ship_packages(weights, mid_capacity, D):
+            result = mid_capacity
+            high = mid_capacity - 1 # Try for a smaller capacity
+        else:
+            low = mid_capacity + 1 # Need a larger capacity
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: Aggressive Cows}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def can_place_cows(stalls: List[int], num_cows: int, min_distance: int) -> bool:
+    """
+    Helper function to check if 'num_cows' can be placed in stalls such that
+    the minimum distance between any two cows is at least 'min_distance'.
+    """
+    cows_placed = 1
+    last_stall = stalls[0]
+    for i in range(1, len(stalls)):
+        if stalls[i] - last_stall >= min_distance:
+            cows_placed += 1
+            last_stall = stalls[i]
+            if cows_placed == num_cows:
+                return True
+    return False
+
+def aggressive_cows(stalls: List[int], k: int) -> int:
+    """
+    Finds the largest minimum distance between 'k' cows placed in given stalls.
+    The stalls must be sorted first. Uses binary search on the possible distances.
+    Time Complexity: O(N log N + N log(max_coord - min_coord))
+    """
+    if k > len(stalls):
+        return 0 
+    stalls.sort() # Sort the stall coordinates
+    n = len(stalls)
+
+    low = 1 # Minimum possible distance between cows (at least 1)
+    high = stalls[-1] - stalls[0] # Maximum possible distance
+
+    result = 0
+    while low <= high:
+        mid_distance = low + (high - low) // 2
+        if can_place_cows(stalls, k, mid_distance):
+            result = mid_distance
+            low = mid_distance + 1 # Try for a larger minimum distance
+        else:
+            high = mid_distance - 1 # Need a smaller minimum distance
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: Kth Missing Positive Number}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_kth_positive(arr: List[int], k: int) -> int:
+    """
+    Finds the k-th positive integer that is missing from a strictly increasing array.
+    Uses binary search.
+    Time Complexity: O(log n)
+    """
+    left, right = 0, len(arr) - 1
+
+    while left <= right:
+        mid = left + (right - left) // 2
+        # Number of missing positive integers before arr[mid]
+        # is arr[mid] - (mid + 1)
+        missing_count = arr[mid] - (mid + 1)
+
+        if missing_count < k:
+            # The k-th missing number is in the right half or is larger than arr[mid]
+            left = mid + 1
+        else:
+            # The k-th missing number is in the left half or is arr[mid] itself
+            right = mid - 1
+    
+    # At the end of binary search, 'left' will be the smallest index
+    # such that arr[left] - (left + 1) >= k.
+    # The number of missing integers up to arr[left-1] is (arr[left-1] - left).
+    # The k-th missing number is (arr[left-1] + k - (arr[left-1] - left))
+    # which simplifies to (left + k).
+    # If left == 0, it means all k missing numbers are before arr.
+    # So the k-th missing number is k.
+    
+    return left + k
+\end{minted}
+
+\noindent\textbf{Problem: Kth Element in Two Sorted Arrays}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_kth_element(nums1: List[int], nums2: List[int], k: int) -> int:
+    """
+    Finds the k-th smallest element in two sorted arrays.
+    Time Complexity: O(log(min(len(nums1), len(nums2))))
+    """
+    n1, n2 = len(nums1), len(nums2)
+
+    # Ensure nums1 is the shorter array for efficiency
+    if n1 > n2:
+        return find_kth_element(nums2, nums1, k)
+
+    # Base cases
+    if n1 == 0:
+        return nums2[k - 1]
+    if k == 1:
+        return min(nums1[0], nums2[0])
+
+    # Divide k into two parts
+    # i: number of elements to consider from nums1
+    # j: number of elements to consider from nums2
+    i = min(k // 2, n1) # Take k/2 from nums1, or all if k/2 is too much
+    j = k - i           # Take remaining from nums2
+
+    if nums1[i - 1] < nums2[j - 1]:
+        # Discard first i elements from nums1, they are too small
+        return find_kth_element(nums1[i:], nums2, k - i)
+    else:
+        # Discard first j elements from nums2, they are too small
+        return find_kth_element(nums1, nums2[j:], k - j)
+\end{minted}
+
+\noindent\textbf{Problem: Longest Repeating Substring (Binary Search)} 
+\\ 
+
+Note: You’re looking for the maximum length \(L\) such that a duplicate of length \(L\) exists. The key facts that make binary-search valid are:
+
+1.  Monotonicity of the predicate  
+    Define  
+
+      P(L) = “there is a length-\(L\) substring that appears ≥2 times.”
+    \\
+    Observe:
+    -  If \(P(L)\) is true, then for any \(k < L\), \(P(k)\) must also be true: taking the two length-\(L\) repeats and truncating to length \(k\) still gives two equal substrings.
+    -  If \(P(L)\) is false, then for any \(k > L\), \(P(k)\) is also false: you can’t suddenly create a longer repeat if no repeat of length \(L\) existed.
+
+    That makes \(P(L)\) a “true–true–…–true–false–false–…–false” step function over \(L\in[0,n]\). Binary-search zeroes in on the transition point in \(\log n\) checks, rather than scanning all \(n\) lengths.
+
+2.  Cost comparison  
+    -  Each check \(P(L)\) runs in \(O(n)\) via rolling-hash.  
+    -  Scanning \(L=1,2,\dots,n\) linearly costs \(O(n)\times O(n)=O(n^2)\).  
+    -  Binary-search costs \(O(\log n)\) checks × \(O(n)\) each = \(O(n\log n)\).
+
+
+
+In short: because the “can-repeat?” test is monotonic in \(L\), you can skip huge swaths of impossible (or trivially possible) lengths in one step. That’s exactly the scenario where binary-search on the answer space shines, giving you an \(O(n\log n)\) algorithm instead of \(O(n^2)\).
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def check_for_duplicate_substring_with_rolling_hash(s: str, length: int) -> bool:
+    """
+    Helper function to check if there is any repeating substring of 'length'
+    in string 's' using a rolling hash.
+    Time Complexity: O(N)
+    """
+    n = len(s)
+    if length == 0:
+        return True # Empty string always repeats
+    if length > n:
+        return False
+
+    base = 26 # or a prime like 31, 53
+    mod = 10**9 + 7 # A large prime modulus
+
+    current_hash = 0
+    power = 1
+
+    # Calculate hash for the first substring
+    for i in range(length):
+        current_hash = (current_hash * base + (ord(s[i]) - ord('a') + 1)) % mod
+        if i < length - 1:
+            power = (power * base) % mod
+    
+    seen_hashes = {current_hash}
+
+    # Roll the hash for subsequent substrings
+    for i in range(length, n):
+        # Remove s[i - length] and add s[i]
+        current_hash = (current_hash - (ord(s[i - length]) - ord('a') + 1) * power) % mod
+        current_hash = (current_hash * base + (ord(s[i]) - ord('a') + 1)) % mod
+        if current_hash < 0: # Ensure hash stays positive after modulo
+            current_hash += mod
+        
+        if current_hash in seen_hashes:
+            return True
+        seen_hashes.add(current_hash)
+    
+    return False
+
+def longest_repeating_substring(s: str) -> int:
+    """
+    Finds the length of the longest repeating substring in 's'.
+    Uses binary search on the possible lengths.
+    Time Complexity: O(N log N) (due to O(N) check function)
+    """
+    n = len(s)
+    left, right = 0, n - 1 # Search space for length of repeating substring
+    longest = 0
+
+    while left <= right:
+        mid_length = left + (right - left) // 2
+        if check_for_duplicate_substring_with_rolling_hash(s, mid_length):
+            longest = mid_length
+            left = mid_length + 1 # Try for a longer repeating substring
+        else:
+            right = mid_length - 1 # Mid_length is too long, try smaller
+    return longest
+\end{minted}
+% \end{document}

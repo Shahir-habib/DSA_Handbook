@@ -1,0 +1,605 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Balanced Parentheses
+\noindent\textbf{Problem: Balanced Parentheses}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def is_valid(s: str) -> bool:
+    """
+    Checks if parentheses string is balanced.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    mapping = {')': '(', '}': '{', ']': '['}
+    
+    for char in s:
+        if char in mapping:
+            top = stack.pop() if stack else '#'
+            if mapping[char] != top:
+                return False
+        else:
+            stack.append(char)
+    
+    return not stack
+\end{minted}
+
+\noindent\textbf{Problem: Sort A Stack}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def sorted_insert(stack, element):
+    """Helper function to insert an element into a sorted stack."""
+    if not stack or element > stack[-1]:
+        stack.append(element)
+    else:
+        temp = stack.pop()
+        sorted_insert(stack, element)
+        stack.append(temp)
+
+def sort_stack(stack):
+    """Sorts the stack in ascending order using recursion."""
+    if stack:
+        temp = stack.pop()
+        sort_stack(stack)
+        sorted_insert(stack, temp)
+\end{minted}
+% Implement K Stacks in an Array
+\noindent\textbf{Problem: Implement K Stacks in an Array}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class KStacks:
+    """
+    Efficiently implements K stacks in single array.
+    Time Complexity: O(1) for push/pop, Space Complexity: O(n + k)
+    """
+    def __init__(self, k, n):
+        self.k = k  # Number of stacks
+        self.n = n  # Total array size
+        self.arr = [0] * n  # Storage array
+        self.top = [-1] * k  # Top indices for each stack
+        self.next_idx = list(range(1, n)) + [-1]  # Next free index
+        self.free = 0  # Starting free index
+
+    def push(self, sn, item):
+        if self.free == -1:
+            raise Exception("Stack overflow")
+        
+        # Store at current free position
+        insert_at = self.free
+        self.free = self.next_idx[insert_at]
+        self.arr[insert_at] = item
+        
+        # Update stack pointers
+        self.next_idx[insert_at] = self.top[sn]
+        self.top[sn] = insert_at
+
+    def pop(self, sn):
+        if self.top[sn] == -1:
+            raise Exception("Stack underflow")
+        
+        # Get top element and update pointers
+        top_idx = self.top[sn]
+        item = self.arr[top_idx]
+        self.top[sn] = self.next_idx[top_idx]
+        
+        # Update free list
+        self.next_idx[top_idx] = self.free
+        self.free = top_idx
+        
+        return item
+\end{minted}
+
+% Stock Span Problem
+\noindent\textbf{Problem: Stock Span Problem}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def stock_span(prices):
+    """
+    Calculates span for each day where span = consecutive days before
+    where price <= current day.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    n = len(prices)
+    stack = []
+    span = [1] * n
+    
+    for i in range(n):
+        # Pop smaller elements
+        while stack and prices[stack[-1]] <= prices[i]:
+            stack.pop()
+        
+        # Calculate span
+        span[i] = i - stack[-1] if stack else i + 1
+        stack.append(i)
+    
+    return span
+\end{minted}
+
+% Previous Greater Element
+\noindent\textbf{Problem: Previous Greater Element}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def prev_greater(arr):
+    """
+    Finds previous greater element for each array element.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    result = [-1] * len(arr)
+    
+    for i in range(len(arr)):
+        while stack and arr[stack[-1]] <= arr[i]:
+            stack.pop()
+        
+        result[i] = arr[stack[-1]] if stack else -1
+        stack.append(i)
+    
+    return result
+\end{minted}
+
+% Next Greater Element
+\noindent\textbf{Problem: Next Greater Element}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def next_greater(arr):
+    """
+    Finds next greater element for each array element.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    result = [-1] * len(arr)
+    
+    for i in range(len(arr)):
+        while stack and arr[stack[-1]] < arr[i]:
+            result[stack.pop()] = arr[i]
+        stack.append(i)
+    
+    return result
+####################################ALTERNATE#####################################
+    def next_greater_from_right(arr):
+    """
+    Finds next greater element for each array element (right to left traversal).
+    Time: O(n), Space: O(n)
+    """
+    stack = []
+    n = len(arr)
+    result = [-1] * n
+
+    for i in range(n - 1, -1, -1):
+        # Pop smaller or equal elements
+        while stack and stack[-1] <= arr[i]:
+            stack.pop()
+
+        # Top of stack is the next greater
+        if stack:
+            result[i] = stack[-1]
+
+        # Push current element for upcoming comparisons
+        stack.append(arr[i])
+
+    return result
+
+\end{minted}
+
+% Largest Rectangular Area in Histogram
+\noindent\textbf{Problem: Largest Rectangular Area in Histogram}\\
+Keep a monotonic increasing stack of indices.When you see a new bar at index i that’s shorter than the bar at the top of the stack, you know:
+
+The popped bar (call its index j) has its right‐first‐smaller at i.
+
+Its left‐first‐smaller is the new top of the stack (after popping).
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def largest_rectangle_area(heights):
+    """
+    Calculates largest rectangle area in histogram using monotonic stack.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    max_area = 0
+    heights.append(0)  # Sentinel value
+    
+    for i in range(len(heights)):
+        while stack and heights[i] < heights[stack[-1]]:
+            h = heights[stack.pop()]
+            w = i - stack[-1] - 1 if stack else i
+            max_area = max(max_area, h * w)
+        stack.append(i)
+    
+    return max_area
+\end{minted}
+
+% Stack with getMin() in O(1)
+\noindent\textbf{Problem: Stack with getMin() in O(1)}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class MinStack:
+    """
+    Implements stack that supports push, pop, top, and getMin in O(1) time.
+    Space Complexity: O(n)
+    """
+    def __init__(self):
+        self.stack = []
+        self.min_stack = []
+
+    def push(self, val: int) -> None:
+        self.stack.append(val)
+        if not self.min_stack or val <= self.min_stack[-1]:
+            self.min_stack.append(val)
+
+    def pop(self) -> None:
+        if self.stack.pop() == self.min_stack[-1]:
+            self.min_stack.pop()
+
+    def top(self) -> int:
+        return self.stack[-1]
+
+    def getMin(self) -> int:
+        return self.min_stack[-1]
+
+################################CONSTANT SPACE #############################
+
+class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.min = None
+
+    def push(self, val: int) -> None:
+        if not self.stack:
+            self.stack.append(val)
+            self.min = val
+        elif val >= self.min:
+            self.stack.append(val)
+        else:
+            # Encode the new min in the stack
+            self.stack.append(2 * val - self.min)
+            self.min = val
+
+    def pop(self) -> None:
+        if not self.stack:
+            return
+        top = self.stack.pop()
+        if top < self.min:
+            # Decoding previous min
+            self.min = 2 * self.min - top
+
+    def top(self) -> int:
+        top = self.stack[-1]
+        if top >= self.min:
+            return top
+        else:
+            # It’s an encoded value, so actual top is current min
+            return self.min
+
+    def getMin(self) -> int:
+        return self.min
+\end{minted}
+
+% Sum of Subarray Minimums
+\noindent\textbf{Problem: Sum of Subarray Minimums}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def sum_subarray_mins(arr):
+    """
+    Calculates sum of minimums of all contiguous subarrays.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    MOD = 10**9 + 7
+    stack = []
+    left = [0] * len(arr)  # Left boundary
+    right = [0] * len(arr)  # Right boundary
+
+    # Left boundaries
+    for i in range(len(arr)):
+        while stack and arr[stack[-1]] > arr[i]:
+            stack.pop()
+        left[i] = i - stack[-1] if stack else i + 1
+        stack.append(i)
+    
+    stack.clear()
+    
+    # Right boundaries
+    for i in range(len(arr)-1, -1, -1):
+        while stack and arr[stack[-1]] >= arr[i]:
+            stack.pop()
+        right[i] = stack[-1] - i if stack else len(arr) - i
+        stack.append(i)
+    
+    # Calculate total sum
+    total = 0
+    for i in range(len(arr)):
+        total = (total + arr[i] * left[i] * right[i]) % MOD
+        
+    return total
+\end{minted}
+
+% Remove K Digits to Make Minimum
+\noindent\textbf{Problem: Remove K Digits to Make Minimum}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def remove_k_digits(num: str, k: int) -> str:
+    """
+    Removes k digits to form smallest possible number.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    remain = len(num) - k
+    
+    for digit in num:
+        while k and stack and stack[-1] > digit:
+            stack.pop()
+            k -= 1
+        stack.append(digit)
+    
+    # If we still have digits to remove (monotonically increasing case)
+    while k > 0:
+        stack.pop()
+        k -= 1
+    
+    # Remove leading zeros
+    res = "".join(stack).lstrip('0')
+    return res if res else "0"
+\end{minted}
+
+% Infix to Postfix Conversion
+\noindent\textbf{Problem: Infix to Postfix Conversion}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def infix_to_postfix(infix):
+    """
+    Converts infix expression to postfix using Shunting Yard algorithm.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    precedence = {'+':1, '-':1, '*':2, '/':2, '^':3}
+    stack = []
+    output = []
+    
+    for token in infix:
+        if token.isalnum():
+            output.append(token)
+        elif token == '(':
+            stack.append(token)
+        elif token == ')':
+            while stack and stack[-1] != '(':
+                output.append(stack.pop())
+            stack.pop()  # Remove '('
+        else:  # Operator
+            while (stack and stack[-1] != '(' and 
+                   precedence[token] <= precedence.get(stack[-1], 0)):
+                output.append(stack.pop())
+            stack.append(token)
+    
+    while stack:
+        output.append(stack.pop())
+    
+    return ''.join(output)
+\end{minted}
+
+% Evaluation of Postfix Expression
+\noindent\textbf{Problem: Evaluation of Postfix Expression}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def eval_postfix(expression):
+    """
+    Evaluates postfix expression using stack.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    
+    for token in expression:
+        if token.isdigit():
+            stack.append(int(token))
+        else:
+            b = stack.pop()
+            a = stack.pop()
+            if token == '+': stack.append(a + b)
+            elif token == '-': stack.append(a - b)
+            elif token == '*': stack.append(a * b)
+            elif token == '/': stack.append(int(a / b))  # Integer division
+            elif token == '^': stack.append(a ** b)
+    
+    return stack[0]
+\end{minted}
+
+% Infix to Prefix Conversion
+\noindent\textbf{Problem: Infix to Prefix Conversion}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def infix_to_prefix(infix):
+    """
+    Converts infix expression to prefix using modified Shunting Yard.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    infix = infix[::-1]  # Reverse infix
+    # Swap parentheses
+    infix = ''.join([')' if c == '(' else '(' if c == ')' else c for c in infix])
+    
+    postfix = infix_to_postfix(infix)  # Use our previous function
+    return postfix[::-1]  # Reverse postfix to get prefix
+\end{minted}
+
+% Evaluation of Prefix Expression
+\noindent\textbf{Problem: Evaluation of Prefix Expression}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def eval_prefix(expression):
+    """
+    Evaluates prefix expression using stack.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    stack = []
+    # Process from right to left
+    for token in reversed(expression):
+        if token.isdigit():
+            stack.append(int(token))
+        else:
+            a = stack.pop()
+            b = stack.pop()
+            if token == '+': stack.append(a + b)
+            elif token == '-': stack.append(a - b)
+            elif token == '*': stack.append(a * b)
+            elif token == '/': stack.append(int(a / b))
+            elif token == '^': stack.append(a ** b)
+    
+    return stack[0]
+\end{minted}
+
+% Largest Rectangle with All 1's (Binary Matrix)
+\noindent\textbf{Problem: Largest Rectangle with All 1's (Binary Matrix)}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def maximal_rectangle(matrix):
+    """
+    Finds largest rectangle containing only 1's in binary matrix.
+    Time Complexity: O(rows * cols), Space Complexity: O(cols)
+    """
+    if not matrix:
+        return 0
+    
+    rows, cols = len(matrix), len(matrix[0])
+    heights = [0] * cols
+    max_area = 0
+    
+    for i in range(rows):
+        # Update heights for current row
+        for j in range(cols):
+            heights[j] = heights[j] + 1 if matrix[i][j] == '1' else 0
+        
+        # Calculate max area in histogram
+        stack = []
+        for j in range(cols + 1):
+            while stack and (j == cols or heights[j] < heights[stack[-1]]):
+                h = heights[stack.pop()]
+                w = j - stack[-1] - 1 if stack else j
+                max_area = max(max_area, h * w)
+            stack.append(j)
+    
+    return max_area
+\end{minted}
+
+% \end{document}

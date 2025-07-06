@@ -1,0 +1,80 @@
+
+\begin{titlepage}
+\centering
+
+% Background design with TikZ
+\begin{tikzpicture}[remember picture,overlay]
+    % Main background
+    \fill[darkblue] (current page.north west) rectangle (current page.south east);
+    
+    % Geometric patterns
+    \foreach \i in {0,1,...,20}
+    {
+        \draw[lightblue, opacity=0.1, line width=0.5pt] 
+        ([yshift=-\i cm]current page.north west) -- 
+        ([yshift=-\i cm, xshift=21cm]current page.north west);
+    }
+    
+    % Decorative circles
+    \foreach \i in {1,2,3}
+    {
+        \draw[accent, opacity=0.3, line width=2pt] 
+        ([xshift=2cm, yshift=-3cm-\i cm]current page.north west) circle (\i*0.3cm);
+    }
+    
+    % Side accent bar
+    \fill[accent] ([xshift=18.5cm]current page.north west) rectangle ([xshift=19cm]current page.south west);
+    
+    % Bottom accent triangle
+    \fill[lightblue, opacity=0.4] 
+    ([yshift=4cm]current page.south west) -- 
+    ([yshift=4cm, xshift=8cm]current page.south west) -- 
+    ([yshift=8cm, xshift=4cm]current page.south west) -- cycle;
+\end{tikzpicture}
+
+\vspace*{2cm}
+
+% Title section
+{\Huge \textcolor{white}{\textbf{A Handbook of Classic Problems}}}
+
+\vspace{0.5cm}
+
+{\LARGE \textcolor{accent}{\textbf{in Data Structure and}}}
+
+\vspace{0.5cm}
+
+{\Huge \textcolor{white}{\textbf{Algorithms}}}
+
+\vspace{1cm}
+
+{\large \textcolor{lightblue}{\textit{and some common patterns}}}
+
+\vspace{3cm}
+
+% Decorative line
+\textcolor{accent}{\rule{8cm}{2pt}}
+
+\vspace{2cm}
+
+% Author section
+{\Large \textcolor{white}{\textbf{Shahir Habib}}}
+
+\vspace{0.5cm}
+
+{\normalsize \textcolor{lightblue}{\textit{Author}}}
+
+\vspace*{\fill}
+
+% Bottom decorative element
+\textcolor{accent}{\rule{12cm}{1pt}}
+
+\vspace{0.5cm}
+
+% Publication info placeholder
+{\small \textcolor{white}{
+    \textit{A Comprehensive Guide to Algorithmic Problem Solving}
+}}
+
+\vspace{1cm}
+
+\end{titlepage}

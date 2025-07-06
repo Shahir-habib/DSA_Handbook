@@ -1,0 +1,305 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \usepackage{standalone}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{Mathematics Problem Solutions}
+
+\noindent\textbf{Problem: Palindrome Number}
+\begin{minted}[
+    bgcolor=bgcolor7,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def is_palindrome_number(n: int) -> bool:
+    """
+    Check if n reads the same forward and backward.
+    Time Complexity: O(log10 N)
+    """
+    if n < 0 or (n % 10 == 0 and n != 0):
+        return False
+    rev_half = 0
+    while n > rev_half:
+        rev_half = rev_half * 10 + n % 10
+        n //= 10
+    return n == rev_half or n == rev_half // 10
+\end{minted}
+\noindent\textbf{Problem: Factorial of a Number}
+\begin{minted}[
+    bgcolor=bgcolor2,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def factorial(n: int, memo: dict[int,int]=None) -> int:
+    """
+    Compute n! iteratively or via memoization.
+    Time Complexity: O(N)
+    """
+    if memo is None:
+        memo = {}
+    if n < 2:
+        return 1
+    if n in memo:
+        return memo[n]
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    memo[n] = result
+    return result
+\end{minted}
+\noindent\textbf{Problem: Trailing Zeros in Factorial}
+\begin{minted}[
+    bgcolor=bgcolor9,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def trailing_zeros(n: int) -> int:
+    """
+    Count how many trailing zeros n! has by counting factors of 5.
+    Time Complexity: O(log_5 N)"""
+    count = 0
+    while n >= 5:
+        n //= 5
+        count += n
+    return count
+\end{minted}
+\noindent\textbf{Problem: GCD / HCF}
+\begin{minted}[
+    bgcolor=bgcolor5,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def gcd(a: int, b: int) -> int:
+    """
+    Compute the greatest common divisor using Euclid’s algorithm.
+    Time Complexity: O(log min(a, b))
+    """
+    a, b = abs(a), abs(b)
+    while b:
+        a, b = b, a % b
+    return a
+\end{minted}
+\noindent\textbf{Problem: Check for Prime}
+\begin{minted}[
+  bgcolor=bgcolor6,
+  frame=lines,
+  framesep=5mm,
+  rulecolor=\color{black},
+  linenos,
+  numbersep=5pt,
+  fontsize=\normalsize
+]{python}
+def is_prime(n: int) -> bool:
+    """
+    Check if n is prime using 6k±1 optimization.
+    Time Complexity: O(root(N)) 
+    """
+    if n < 2:
+        return False
+    if n in (2, 3):
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+
+    return True
+\end{minted}
+
+\noindent\textbf{Problem: Prime Factors}
+\begin{minted}[
+    bgcolor=bgcolor1,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def prime_factors(n: int) -> list[int]:
+    """
+    Return the list of prime factors of n using 6k±1 optimization.
+    Time Complexity: O(root(N))
+    """
+    factors = []
+    # remove all 2s
+    while n % 2 == 0:
+        factors.append(2)
+        n //= 2
+    # remove all 3s
+    while n % 3 == 0:
+        factors.append(3)
+        n //= 3
+    # now test 6k±1
+    i = 5
+    while i * i <= n:
+        # factor = i
+        while n % i == 0:
+            factors.append(i)
+            n //= i
+        # factor = i + 2
+        while n % (i + 2) == 0:
+            factors.append(i + 2)
+            n //= (i + 2)
+        i += 6
+    # if n is still >1, it’s prime
+    if n > 1:
+        factors.append(n)
+    return factors
+\end{minted}
+\noindent\textbf{Problem: All Divisors of a Number}
+\begin{minted}[
+    bgcolor=bgcolor10,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def all_divisors(n: int) -> list[int]:
+    """
+    Return all divisors of n in ascending order.
+    Time Complexity: O(root(N))"""
+    small, large = [], []
+    i = 1
+    while i * i <= n:
+        if n % i == 0:
+            small.append(i)
+            if i != n // i:
+                large.append(n // i)
+        i += 1
+    return small + large[::-1]
+\end{minted}
+\noindent\textbf{Problem: Sieve of Eratosthenes}
+\begin{minted}[
+    bgcolor=bgcolor3,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def sieve(n: int) -> list[bool]:
+    """
+    Generate a boolean list is_prime[0..n] using the sieve.
+    Time Complexity: O(n log log n)
+    """
+    if n < 2:
+        return [False] * (n + 1)
+    is_prime = [True] * (n + 1)
+    is_prime[0:2] = [False, False]
+    for p in range(3, int(n**0.5) + 1, 2):
+        if is_prime[p]:
+            for multiple in range(p*p, n + 1, 2*p):
+                is_prime[multiple] = False
+    return is_prime
+\end{minted}
+\noindent\textbf{Problem: Computing Power (Recursive)}
+\begin{minted}[
+    bgcolor=bgcolor6,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def power_recursive(a: float, b: int) -> float:
+    """
+    Compute a**b via exponentiation by squaring (recursive).
+    Time Complexity: O(log b)    """
+    if b == 0:
+        return 1
+    half = power_recursive(a, b // 2)
+    return half * half if b % 2 == 0 else half * half * a
+\end{minted}
+\noindent\textbf{Problem: Iterative Power}
+\begin{minted}[
+    bgcolor=bgcolor2,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def power_iterative(a: float, b: int) -> float:
+    """
+    Compute a**b via binary exponentiation (iterative).
+    Time Complexity: O(log b)    """
+    result = 1.0
+    base = a
+    exp = b
+    while exp > 0:
+        if exp & 1:
+            result *= base
+        base *= base
+        exp >>= 1
+    return result
+\end{minted}
+\noindent\textbf{Problem: Modular Arithmetic}
+\begin{minted}[
+    bgcolor=bgcolor4,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def mod_pow(a: int, b: int, m: int) -> int:
+    """
+    Compute (a**b) mod m using fast exponentiation.
+    Time Complexity: O(log b)    """
+    result = 1
+    base = a % m
+    exp = b
+    while exp > 0:
+        if exp & 1:
+            result = (result * base) % m
+        base = (base * base) % m
+        exp >>= 1
+    return result
+\end{minted}
+% \end{document}

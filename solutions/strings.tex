@@ -1,0 +1,357 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{String Problem Solutions}
+\noindent\textbf{Problem:} Is Subsequence of Other
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def is_subsequence(s: str, t: str) -> bool:
+    """
+    Return True if `s` is a subsequence of `t`, i.e. all characters of s
+    appear in order (but not necessarily contiguously) in t.
+    """
+    i, j = 0, 0
+    # i scans s, j scans t
+    while i < len(s) and j < len(t):
+        if s[i] == t[j]:
+            # match: consume s[i]
+            i += 1
+        # always advance t’s pointer
+        j += 1
+    # if we’ve consumed all of s, it’s a subsequence
+    return i == len(s)
+\end{minted}
+\noindent\textbf{Problem:} Naive Pattern Searching
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def naive_pattern_search(text: str, pat: str) -> List[int]:
+    """
+    Return start-indices where pat occurs in text by brute force.
+    O(n*m) time.
+    """
+    n, m = len(text), len(pat)
+    matches = []
+    for i in range(n - m + 1):
+        # check match at offset i
+        for j in range(m):
+            if text[i + j] != pat[j]:
+                break
+        else:
+            matches.append(i)
+    return matches
+\end{minted}
+\noindent\textbf{Problem:} Rabin–Karp Algorithm
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def rabin_karp_search(text: str, pat: str,
+                      base: int = 256, mod: int = 101) -> List[int]:
+    """
+    Find all occurrences of pat in text using rolling‐hash.
+    Average O(n+m), worst O(n*m) if many hash collisions.
+    """
+    n, m = len(text), len(pat)
+    if m > n:
+        return []
+
+    # precompute high-order base^(m-1) % mod
+    h = pow(base, m - 1, mod)
+    p_hash = t_hash = 0
+    res = []
+
+    # initial hash for pattern & first window
+    for i in range(m):
+        p_hash = (p_hash * base + ord(pat[i])) % mod
+        t_hash = (t_hash * base + ord(text[i])) % mod
+
+    for i in range(n - m + 1):
+        # if hashes match, verify actual substring
+        if p_hash == t_hash and text[i:i+m] == pat:
+            res.append(i)
+        # roll the window
+        if i < n - m:
+            t_hash = (t_hash - ord(text[i]) * h) % mod
+            t_hash = (t_hash * base + ord(text[i + m])) % mod
+            t_hash = (t_hash + mod) % mod  # ensure positive
+    return res
+\end{minted}
+\noindent\textbf{Problem:} Knuth–Morris–Pratt (KMP) Algorithm
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def kmp_search(text: str, pat: str) -> List[int]:
+    """
+    Return all start-indices of pat in text using KMP in O(n+m).
+    """
+    # build lps (longest proper‐prefix‐that‐is‐suffix) table
+    m = len(pat)
+    lps = [0] * m
+    length = 0
+    i = 1
+    while i < m:
+        if pat[i] == pat[length]:
+            length += 1
+            lps[i] = length
+            i += 1
+        elif length:
+            length = lps[length - 1]
+        else:
+            lps[i] = 0
+            i += 1
+
+    # search
+    res = []
+    i = j = 0  # i→text, j→pat
+    n = len(text)
+    while i < n:
+        if text[i] == pat[j]:
+            i += 1
+            j += 1
+            if j == m:
+                res.append(i - m)
+                j = lps[j - 1]
+        else:
+            if j:
+                j = lps[j - 1]
+            else:
+                i += 1
+    return res
+\end{minted}
+\noindent\textbf{Problem:} Check if Strings are Rotations
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def are_rotations(s1: str, s2: str) -> bool:
+    """
+    Return True if s2 is a rotation of s1 by checking s2 in s1+s1.
+    O(n) time.
+    """
+    return len(s1) == len(s2) and s2 in (s1 + s1)
+\end{minted}
+\noindent\textbf{Problem:} Longest Substring with Distinct Characters
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def longest_unique_substring(s: str) -> Tuple[int, str]:
+    """
+    Return (length, substring) of the longest substring without repeating chars.
+    Uses sliding window + hashmap in O(n).
+    """
+    start = max_len = 0
+    max_sub = ""
+    last_seen = {}
+
+    for i, c in enumerate(s):
+        if c in last_seen and last_seen[c] >= start:
+            # move window past previous occurrence
+            start = last_seen[c] + 1
+        last_seen[c] = i
+        curr_len = i - start + 1
+        if curr_len > max_len:
+            max_len = curr_len
+            max_sub = s[start:i+1]
+
+    return max_len, max_sub
+\end{minted}
+\noindent\textbf{Problem:} Lexicographical rank of a String
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+
+def lexicographic_rank(s: str) -> int:
+    """
+    Return 1-based rank of s among its permutations (all chars unique).
+    O(n^2) due to counting smaller chars for each position.
+    """
+    n = len(s)
+    rank = 1
+    for i in range(n):
+        # count chars smaller than s[i] to its right
+        smaller = sum(1 for j in range(i+1, n) if s[j] < s[i])
+        rank += smaller * factorial(n - i - 1)
+    return rank
+\end{minted}
+\noindent\textbf{Problem:} Longest Palindromic Substring
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def longest_palindromic_substring(s: str) -> str:
+    """
+    Return the longest palindromic substring via expand‐around‐center in O(n^2).
+    """
+    if not s:
+        return ""
+
+    def expand(l: int, r: int) -> Tuple[int,int]:
+        # expand as long as s[l]==s[r]
+        while l >= 0 and r < len(s) and s[l] == s[r]:
+            l -= 1
+            r += 1
+        return l+1, r-1  # back up one step
+
+    start = end = 0
+    for i in range(len(s)):
+        # odd-length palindrome
+        l1, r1 = expand(i, i)
+        # even-length palindrome
+        l2, r2 = expand(i, i+1)
+        # pick the longer of the two
+        if r1 - l1 > end - start:
+            start, end = l1, r1
+        if r2 - l2 > end - start:
+            start, end = l2, r2
+
+    return s[start:end+1]
+
+\end{minted}
+\noindent\textbf{Problem:} Z-function String Matching
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def z_function(s: str) -> List[int]:
+    """
+    Compute the Z-array for s where Z[i] = max length of prefix
+    starting at s[i]. Runs in O(len(s)).
+    """
+    n = len(s)
+    Z = [0]*n
+    l = r = 0
+    for i in range(1, n):
+        if i <= r:
+            Z[i] = min(r - i + 1, Z[i-l])
+        while i + Z[i] < n and s[Z[i]] == s[i + Z[i]]:
+            Z[i] += 1
+        if i + Z[i] - 1 > r:
+            l, r = i, i + Z[i] - 1
+    return Z
+
+def z_search(text: str, pat: str) -> List[int]:
+    """
+    Find all occurrences of pat in text in O(n+m) via Z-function.
+    """
+    concat = pat + "$" + text
+    Z = z_function(concat)
+    m = len(pat)
+    res = []
+    for i in range(m+1, len(concat)):
+        if Z[i] == m:
+            # match starts at i-(m+1)
+            res.append(i - m - 1)
+    return res
+\end{minted}
+\noindent\textbf{Problem:} Anagram Search
+\begin{minted}[
+bgcolor=bgcolor,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def find_anagrams(text: str, pat: str) -> List[int]:
+    """
+    Return all start-indices where text[i:i+len(pat)] is an anagram of pat.
+    Uses sliding window + counters in O(n).
+    """
+    n, m = len(text), len(pat)
+    if m > n:
+        return []
+
+    pat_count = Counter(pat)
+    win_count = Counter()
+    res = []
+
+    for i, c in enumerate(text):
+        win_count[c] += 1
+        # shrink window when size > m
+        if i >= m:
+            left_char = text[i-m]
+            if win_count[left_char] == 1:
+                del win_count[left_char]
+            else:
+                win_count[left_char] -= 1
+        # compare when we have a full-size window
+        if i >= m-1 and win_count == pat_count:
+            res.append(i - m + 1)
+
+    return res
+\end{minted}
+% \end{document}

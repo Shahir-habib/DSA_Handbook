@@ -1,0 +1,178 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{Bit-Manipulation Problem Solutions}
+
+    \noindent\textbf{Problem: XOR of All Numbers from 1 to N}
+    \begin{minted}[
+        bgcolor=bgcolor9,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+def xor_1_to_n(n: int) -> int:
+    """
+    Compute XOR of all integers from 1 up to n in O(1) time
+    by exploiting the pattern of prefix XORs modulo 4.
+    """
+    # Using n & 3 is a fast bitwise trick for n % 4.(For 2^x can use & with 2^x -1)
+    r = n & 3
+    if r == 0:
+        # Sequence ends in 0 ^ 1 ^ … ^ (4k−1) ^ 4k;
+        # every block of 4 numbers has XOR = 0 ^ 1 ^ 2 ^ 3 = 0,
+        # so only the last term (n) remains.
+        return n
+    if r == 1:
+        # One extra element beyond a multiple of 4: … ^ (4k) ^ (4k+1)
+        # gives 0 ^ (4k+1) = 4k+1, but since 4k cancels to 0 we get 1.
+        return 1
+    if r == 2:
+        # Two extra: … ^ (4k) ^ (4k+1) ^ (4k+2)
+        # = (0 ^ 1) ^ 2 = 1 ^ 2 = 3 → which equals n+1 when n=4k+2.
+        return n + 1
+    # r == 3
+    # Three extra: … ^ (4k) ^ (4k+1) ^ (4k+2) ^ (4k+3)
+    # = ((0^1)^2)^3 = 3^3 = 0
+    return 0
+
+    \end{minted}
+
+    \noindent\textbf{Problem: Two Odd Occurring Numbers}
+    \begin{minted}[
+        bgcolor=bgcolor5,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    from typing import Tuple, List
+
+    def two_odd_occurring(arr: List[int]) -> Tuple[int,int]:
+        """
+        In an array where exactly two numbers appear odd times and others even,
+        return the two odd-occurring numbers.
+        Time Complexity: O(n)
+        """
+        xor_all = 0
+        for x in arr:
+            xor_all ^= x
+        # isolate rightmost set bit
+        mask = xor_all & -xor_all
+        a = b = 0
+        for x in arr:
+            if x & mask:
+                a ^= x
+            else:
+                b ^= x
+        return a, b
+    \end{minted}
+
+    \noindent\textbf{Problem: Power Set using Bitwise}
+    \begin{minted}[
+        bgcolor=bgcolor10,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    from typing import List
+
+    def power_set(arr: List[int]) -> List[List[int]]:
+        """
+        Generate all subsets of arr using bit-masking.
+        Time Complexity: O(2^n · n)
+        """
+        n = len(arr)
+        result = []
+        for mask in range(1 << n):
+            subset = [arr[i] for i in range(n) if mask & (1 << i)]
+            result.append(subset)
+        return result
+    \end{minted}
+
+    \noindent\textbf{Problem: Maximum AND Value of Pair in Array}
+    \begin{minted}[
+        bgcolor=bgcolor3,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    from typing import List
+
+    def max_pair_and(arr: List[int]) -> int:
+        """
+        Find maximum (x & y) over all pairs in arr by filtering bits top-down.
+        Time Complexity: O(n · log MAX)
+        """
+        res = 0
+        for bit in range(arr[0].bit_length(), -1, -1):
+            candidate = res | (1 << bit)
+            count = sum(1 for x in arr if (x & candidate) == candidate)
+            if count >= 2:
+                res = candidate
+        return res
+    \end{minted}
+
+    \noindent\textbf{Problem: Divide Two Integers using Bit Manipulation}
+    \begin{minted}[
+        bgcolor=bgcolor8,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    def divide(dividend: int, divisor: int) -> int:
+    """
+    Divide dividend by divisor without using / or * operators.
+    Time Complexity: O(log |dividend|)
+    """
+    if divisor == 0:
+        raise ZeroDivisionError("division by zero")
+    sign = -1 if (dividend < 0) ^ (divisor < 0) else 1
+    a, b = abs(dividend), abs(divisor)
+    result = 0
+
+    # “Bring down” bits one by one, from highest to lowest
+    #    a.bit_length()–1 is the index of dividend’s top bit.
+    for shift in range(a.bit_length() - 1, -1, -1):
+        #  Try to subtract (divisor << shift) from current remainder a
+        if (b << shift) <= a:
+            a -= b << shift             # subtract that chunk
+            result |= 1 << shift        # like for 10,3 check with 4 then 2 then 1
+    return sign * result
+
+    \end{minted}
+% \end{document}

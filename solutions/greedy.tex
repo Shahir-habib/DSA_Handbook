@@ -1,0 +1,210 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Activity Selection Problem
+\noindent\textbf{Problem: Activity Selection Problem}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def activity_selection(start, finish):
+    """
+    Selects maximum number of non-overlapping activities.
+    Time Complexity: O(n log n), Space Complexity: O(n)
+    """
+    # Sort activities by finish time
+    activities = sorted(zip(start, finish), key=lambda x: x[1])
+    count = 1
+    last_finish = activities[0][1]
+    
+    # Select activities
+    for i in range(1, len(activities)):
+        s, f = activities[i]
+        if s >= last_finish:
+            count += 1
+            last_finish = f
+    
+    return count
+\end{minted}
+
+% Fractional Knapsack Problem
+\noindent\textbf{Problem: Fractional Knapsack Problem}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def fractional_knapsack(weights, values, capacity):
+    """
+    Maximizes value in knapsack using fractional items.
+    Time Complexity: O(n log n), Space Complexity: O(n)
+    """
+    # Calculate value per unit weight
+    items = [(v/w, w, v) for w, v in zip(weights, values)]
+    items.sort(reverse=True)  # Sort by value/weight descending
+    
+    total_value = 0.0
+    for ratio, weight, value in items:
+        if capacity >= weight:
+            # Take whole item
+            total_value += value
+            capacity -= weight
+        else:
+            # Take fraction
+            total_value += ratio * capacity
+            break
+    
+    return total_value
+\end{minted}
+
+% Job Sequencing Problem
+\noindent\textbf{Problem: Job Sequencing Problem}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def job_sequencing(jobs):
+    """
+    Maximizes profit by scheduling jobs within deadlines.
+    Time Complexity: O(n²), Space Complexity: O(n)
+    """
+    # Sort jobs by profit descending
+    jobs.sort(key=lambda x: x[2], reverse=True)
+    
+    # Find maximum deadline
+    max_deadline = max(job[1] for job in jobs)
+    
+    # Initialize result array
+    result = [None] * (max_deadline + 1)
+    total_profit = 0
+    
+    for job in jobs:
+        # Find latest available slot before deadline
+        for j in range(job[1], 0, -1):
+            if j <= max_deadline and result[j] is None:
+                result[j] = job[0]  # Job ID
+                total_profit += job[2]  # Profit
+                break
+    
+    # Return sequence and profit
+    sequence = [job_id for job_id in result if job_id is not None]
+    return sequence, total_profit
+\end{minted}
+
+% Huffman Coding
+\noindent\textbf{Problem: Huffman Coding}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+from collections import defaultdict
+
+class Node:
+    def __init__(self, char=None, freq=0):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+        
+    # For heap comparison
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(text):
+    """
+    Builds Huffman tree from character frequencies.
+    Time Complexity: O(n log n), Space Complexity: O(n)
+    """
+    # Count character frequencies
+    freq = defaultdict(int)
+    for char in text:
+        freq[char] += 1
+    
+    # Create leaf nodes and push to min-heap
+    min_heap = []
+    for char, count in freq.items():
+        heapq.heappush(min_heap, Node(char, count))
+    
+    # Build Huffman tree
+    while len(min_heap) > 1:
+        left = heapq.heappop(min_heap)
+        right = heapq.heappop(min_heap)
+        
+        merged = Node(freq=left.freq + right.freq)
+        merged.left = left
+        merged.right = right
+        heapq.heappush(min_heap, merged)
+    
+    return heapq.heappop(min_heap)
+
+def generate_codes(root, prefix="", code_map=None):
+    """
+    Generates Huffman codes from tree traversal.
+    Time Complexity: O(n), Space Complexity: O(n)
+    """
+    if code_map is None:
+        code_map = {}
+    
+    if root.char is not None:
+        code_map[root.char] = prefix
+    else:
+        generate_codes(root.left, prefix + "0", code_map)
+        generate_codes(root.right, prefix + "1", code_map)
+    
+    return code_map
+
+def huffman_encode(text):
+    """
+    Encodes text using Huffman coding.
+    Returns encoded text and code mapping.
+    """
+    if not text:
+        return "", {}
+    
+    root = build_huffman_tree(text)
+    codes = generate_codes(root)
+    encoded = "".join(codes[char] for char in text)
+    return encoded, codes
+\end{minted}
+
+% \end{document}

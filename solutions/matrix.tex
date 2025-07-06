@@ -1,0 +1,352 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{Matrix Problem Solutions}
+\noindent\textbf{Problem: Matrix Rotation (90° Clockwise)}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+
+def rotate_matrix(matrix: List[List[int]]) -> None:
+    """
+    Rotates an n x n matrix 90 degrees clockwise in-place.
+    Time Complexity: O(n^2)
+    """
+    n = len(matrix)
+    # Transpose the matrix
+    for i in range(n):
+        for j in range(i, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    # Reverse each row
+    for i in range(n):
+        matrix[i].reverse()
+\end{minted}
+
+\noindent\textbf{Problem: Spiral Traversal of Matrix}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+
+def spiral_order(matrix: List[List[int]]) -> List[int]:
+    """
+    Traverses a matrix in spiral order.
+    Time Complexity: O(n * m)
+    """
+    if not matrix or not matrix:
+        return []
+
+    m, n = len(matrix), len(matrix)
+    result = []
+    top, bottom, left, right = 0, m - 1, 0, n - 1
+
+    while top <= bottom and left <= right:
+        # Traverse right
+        for col in range(left, right + 1):
+            result.append(matrix[top][col])
+        top += 1
+
+        # Traverse down
+        for row in range(top, bottom + 1):
+            result.append(matrix[row][right])
+        right -= 1
+
+        # Traverse left
+        if top <= bottom:
+            for col in range(right, left - 1, -1):
+                result.append(matrix[bottom][col])
+            bottom -= 1
+
+        # Traverse up
+        if left <= right:
+            for row in range(bottom, top - 1, -1):
+                result.append(matrix[row][left])
+            left += 1
+    return result
+\end{minted}
+
+\noindent\textbf{Problem: Median of Row Wise Sorted Matrix}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def median_row_wise_sorted_matrix(matrix: List[List[int]]) -> int:
+    """
+    Finds the median of a row-wise sorted matrix.
+    Time Complexity: O(r * log(max - min) * log(c))
+    Note: Requires all rows to be sorted and finds median of all elements combined.
+    """
+    rows = len(matrix)
+    cols = len(matrix)
+
+    min_val = float('inf')
+    max_val = float('-inf')
+
+    for r in range(rows):
+        min_val = min(min_val, matrix[r][0])
+        max_val = max(max_val, matrix[r][cols - 1])
+
+    desired_count = (rows * cols + 1) // 2
+
+    while min_val <= max_val:
+        mid_val = (min_val + max_val) // 2
+        count = 0 #Count how many entries ≤ mid across all rows
+        for r in range(rows):
+            count += bisect.bisect_right(matrix[r], mid_val)
+        # If fewer than desired are ≤ mid, median must be bigger
+        if count < desired_count:
+            min_val = mid_val + 1
+        else:
+            max_val = mid_val - 1
+    # lo == hi is the median value
+    return min_val
+\end{minted}
+
+\noindent\textbf{Problem: Search in Row-wise and Column-wise Sorted Matrix}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+
+def search_matrix_rc_sorted(matrix: List[List[int]], target: int) -> bool:
+    """
+    Searches for a target in a matrix sorted row-wise and column-wise.
+    Time Complexity: O(n + m)
+    """
+    if not matrix or not matrix:
+        return False
+
+    rows = len(matrix)
+    cols = len(matrix)
+    row, col = 0, cols - 1 # Start from top-right corner
+
+    while row < rows and col >= 0:
+        if matrix[row][col] == target:
+            return True
+        elif matrix[row][col] < target:
+            row += 1 # Target is larger, move down
+        else:
+            col -= 1 # Target is smaller, move left
+    return False
+\end{minted}
+
+\noindent\textbf{Problem: Determinant of a Matrix}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+
+def _get_cofactor(matrix: List[List[int]], p: int, q: int, n: int) -> List[List[int]]:
+    """Helper to get cofactor matrix for determinant calculation."""
+    temp = []
+    for row in range(n):
+        if row != p:
+            new_row = []
+            for col in range(n):
+                if col != q:
+                    new_row.append(matrix[row][col])
+            if new_row:
+                temp.append(new_row)
+    return temp
+
+
+def determinant_of_matrix(matrix: List[List[int]]) -> int:
+    """
+    Computes the determinant of a square matrix using recursive cofactor expansion.
+    Time Complexity: O(n!) for this naive recursive approach.
+    The source notes O(n^3) for optimized methods like Gaussian Elimination.
+    """
+    n = len(matrix)
+    if n == 1:
+        return matrix[0][0]
+    if n == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+    det = 0
+    sign = 1
+    for f in range(n):
+        cofactor = _get_cofactor(matrix, 0, f, n)
+        det += sign * matrix[0][f] * determinant_of_matrix(cofactor)
+        sign = -sign
+    return det
+
+    ###################################GAUSSIAN ELIMINATION##############################
+from typing import List
+
+def determinant_gaussian(matrix: List[List[float]]) -> float:
+    """
+    Compute the determinant of a square matrix using
+    Gaussian elimination with partial pivoting in O(n^3).
+    """
+    n = len(matrix)
+    # Make a working copy so we don't clobber the input
+    A = [row.copy() for row in matrix]
+    det = 1.0
+
+    for i in range(n):
+        # 1) Partial pivot: find the row with largest abs value in column i
+        pivot = max(range(i, n), key=lambda r: abs(A[r][i]))
+        if abs(A[pivot][i]) < 1e-12:
+            return 0.0  # singular matrix
+
+        # 2) Swap current row with pivot row (if needed)
+        if pivot != i:
+            A[i], A[pivot] = A[pivot], A[i]
+            det = -det   # swapping rows flips det’s sign
+
+        # 3) Multiply det by the pivot element
+        det *= A[i][i]
+
+        # 4) Eliminate below: make all entries A[j][i] zero for j>i
+        for j in range(i+1, n):
+            factor = A[j][i] / A[i][i]
+            # subtract factor * pivot row from row j
+            for k in range(i, n):
+                A[j][k] -= factor * A[i][k]
+
+    return det
+
+\end{minted}
+
+\noindent\textbf{Problem: Search in Row-wise Sorted Matrix}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+def search_row_sorted_matrix(matrix: List[List[int]], target: int) -> bool:
+    """
+    Search in a matrix where:
+      - each row is sorted left→right, and
+      - row[i][0] >= row[i-1][-1] (so the whole matrix is one big sorted list).
+    Time: O(log(rows * cols)), Space: O(1)
+    """
+    if not matrix or not matrix[0]:
+        return False
+
+    rows, cols = len(matrix), len(matrix[0])
+    left, right = 0, rows * cols - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+        r, c = divmod(mid, cols)
+        val = matrix[r][c]
+
+        if val == target:
+            return True
+        elif val < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return False
+\end{minted}
+
+\noindent\textbf{Problem: Peak Element in 2D Matrix}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+
+
+def find_peak_element_2d(matrix: List[List[int]]) -> List[int]:
+    """
+    Finds a peak element in a 2D matrix (where matrix[i][j] > all its neighbors).
+    Time Complexity: O(n log m)
+    Note: Returns coordinates [row, col] of one such peak.
+    """
+    if not matrix or not matrix:
+        return []
+
+    rows = len(matrix)
+    cols = len(matrix)
+    low_col, high_col = 0, cols - 1
+
+    while low_col <= high_col:
+        mid_col = low_col + (high_col - low_col) // 2
+        max_row = 0
+        for r in range(rows):
+            if matrix[r][mid_col] > matrix[max_row][mid_col]:
+                max_row = r
+
+        is_left_greater = False
+        if mid_col > 0 and matrix[max_row][mid_col - 1] > matrix[max_row][mid_col]:
+            is_left_greater = True
+
+        if not is_left_greater and 
+           (mid_col == cols-1 or matrix[max_row][mid_col + 1] < matrix[max_row][mid_col]):
+            return [max_row, mid_col] # Found a peak
+
+        elif is_left_greater:
+            high_col = mid_col - 1
+        else:
+            low_col = mid_col + 1
+    return [] # Should not reach here if a peak always exists as per problem definition
+\end{minted}
+% \end{document}

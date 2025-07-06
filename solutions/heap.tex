@@ -1,0 +1,388 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Heapify
+\noindent\textbf{Problem: Heapify (min-heap)}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def min_heapify(arr, i, n):
+    """
+    Maintains min-heap property from index i downward.
+    Time Complexity: O(log n), Space Complexity: O(1)
+    """
+    smallest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    
+    if left < n and arr[left] < arr[smallest]:
+        smallest = left
+        
+    if right < n and arr[right] < arr[smallest]:
+        smallest = right
+        
+    if smallest != i:
+        arr[i], arr[smallest] = arr[smallest], arr[i]
+        min_heapify(arr, smallest, n)
+\end{minted}
+
+% Build Heap
+\noindent\textbf{Problem: Build Heap}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def build_min_heap(arr):
+    """
+    Converts array into min-heap from bottom-up.
+    Time Complexity: O(n), Space Complexity: O(1)
+    """
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        min_heapify(arr, i, n)
+\end{minted}
+
+% Insertion in Heap
+\noindent\textbf{Problem: Insertion in Heap}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def heap_insert(heap, value):
+    """
+    Inserts value into min-heap and maintains heap property.
+    Time Complexity: O(log n), Space Complexity: O(1)
+    """
+    heap.append(value)
+    i = len(heap) - 1
+    # Bubble up
+    while i > 0:
+        parent = (i - 1) // 2
+        if heap[parent] <= heap[i]:
+            break
+        heap[i], heap[parent] = heap[parent], heap[i]
+        i = parent
+\end{minted}
+
+% Decrease Key in Min Heap
+\noindent\textbf{Problem: Decrease Key in Min Heap}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def decrease_key(heap, i, new_val):
+    """
+    Decreases value at index i and maintains heap property.
+    Time Complexity: O(log n), Space Complexity: O(1)
+    """
+    if new_val > heap[i]:
+        raise ValueError("New value larger than current")
+    
+    heap[i] = new_val
+    # Bubble up
+    while i > 0:
+        parent = (i - 1) // 2
+        if heap[parent] <= heap[i]:
+            break
+        heap[i], heap[parent] = heap[parent], heap[i]
+        i = parent
+\end{minted}
+
+% Extract Min from Min Heap
+\noindent\textbf{Problem: Extract Min from Min Heap}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def extract_min(heap):
+    """
+    Extracts minimum element from min-heap.
+    Time Complexity: O(log n), Space Complexity: O(1)
+    """
+    if not heap:
+        return None
+    
+    min_val = heap[0]
+    heap[0] = heap[-1]
+    heap.pop()
+    min_heapify(heap, 0, len(heap))
+    return min_val
+\end{minted}
+
+% Heap Sort
+\noindent\textbf{Problem: Heap Sort}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def heap_sort(arr):
+    """
+    Sorts array using heap sort algorithm.
+    Time Complexity: O(n log n), Space Complexity: O(1)
+    """
+    n = len(arr)
+    # Build max-heap (using min_heapify with sign flip)
+    for i in range(n // 2 - 1, -1, -1):
+        min_heapify(arr, i, n)
+    
+    # Extract elements one by one
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        min_heapify(arr, 0, i)
+\end{minted}
+
+% Sort K-Sorted Array
+\noindent\textbf{Problem: Sort K-Sorted Array}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+def sort_k_sorted(arr, k):
+    """
+    Sorts array where each element is at most k positions away.
+    Time Complexity: O(n log k), Space Complexity: O(k)
+    """
+    min_heap = []
+    sorted_arr = []
+    
+    # Add first k+1 elements
+    for i in range(min(k + 1, len(arr))):
+        heapq.heappush(min_heap, arr[i])
+    
+    # Process remaining elements
+    for i in range(k + 1, len(arr)):
+        sorted_arr.append(heapq.heappop(min_heap))
+        heapq.heappush(min_heap, arr[i])
+    
+    # Empty heap
+    while min_heap:
+        sorted_arr.append(heapq.heappop(min_heap))
+    
+    return sorted_arr
+\end{minted}
+
+% Buy Maximum Items
+\noindent\textbf{Problem: Buy Maximum Items with Given Sum}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+def max_items(costs, budget):
+    """
+    Calculates maximum items that can be bought with given budget.
+    Time Complexity: O(n log n), Space Complexity: O(1)
+    """
+    heapq.heapify(costs)
+    count = 0
+    
+    while costs and budget >= costs[0]:
+        budget -= heapq.heappop(costs)
+        count += 1
+    
+    return count
+\end{minted}
+
+% K Largest Elements
+\noindent\textbf{Problem: K Largest Elements}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+def k_largest(arr, k):
+    """
+    Finds k largest elements in array using min-heap.
+    Time Complexity: O(n log k), Space Complexity: O(k)
+    """
+    min_heap = []
+    for num in arr:
+        heapq.heappush(min_heap, num)
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+    return min_heap
+\end{minted}
+
+% K Closest Elements
+\noindent\textbf{Problem: K Closest Elements}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+def k_closest(points, k, origin=(0,0)):
+    """
+    Finds k closest points to origin using max-heap.
+    Time Complexity: O(n log k), Space Complexity: O(k)
+    """
+    def distance(p):
+        return (p[0]-origin[0])**2 + (p[1]-origin[1])**2
+    
+    max_heap = []
+    for point in points:
+        dist = -distance(point)  # Use negative for max-heap
+        if len(max_heap) < k:
+            heapq.heappush(max_heap, (dist, point))
+        else:
+            if dist > max_heap[0][0]:
+                heapq.heapreplace(max_heap, (dist, point))
+    
+    return [point for (_, point) in max_heap]
+\end{minted}
+
+% Merge K Sorted Arrays
+\noindent\textbf{Problem: Merge K Sorted Arrays}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+def merge_k_sorted(arrays):
+    """
+    Merges k sorted arrays into single sorted array.
+    Time Complexity: O(n log k), Space Complexity: O(k)
+    """
+    min_heap = []
+    result = []
+    
+    # Initialize heap with first element of each array
+    for i, arr in enumerate(arrays):
+        if arr:
+            heapq.heappush(min_heap, (arr[0], i, 0))
+    
+    # Merge process
+    while min_heap:
+        val, arr_idx, idx = heapq.heappop(min_heap)
+        result.append(val)
+        if idx + 1 < len(arrays[arr_idx]):
+            next_val = arrays[arr_idx][idx+1]
+            heapq.heappush(min_heap, (next_val, arr_idx, idx+1))
+    
+    return result
+\end{minted}
+
+% Median of a Stream
+\noindent\textbf{Problem: Median of a Stream}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+import heapq
+
+class MedianFinder:
+    """
+    Maintains median of streaming data using two heaps.
+    Time Complexity: O(log n) per insertion, O(1) for median
+    Space Complexity: O(n)
+    """
+    def __init__(self):
+        self.small = []  # max-heap (store negative values)
+        self.large = []  # min-heap
+
+    def add_num(self, num: int) -> None:
+        # Add to appropriate heap
+        if not self.small or num <= -self.small[0]:
+            heapq.heappush(self.small, -num)
+        else:
+            heapq.heappush(self.large, num)
+        
+        # Balance heaps
+        if len(self.small) > len(self.large) + 1:
+            heapq.heappush(self.large, -heapq.heappop(self.small))
+        elif len(self.large) > len(self.small):
+            heapq.heappush(self.small, -heapq.heappop(self.large))
+
+    def find_median(self) -> float:
+        if len(self.small) == len(self.large):
+            return (-self.small[0] + self.large[0]) / 2
+        return -self.small[0]
+\end{minted}
+
+% \end{document}

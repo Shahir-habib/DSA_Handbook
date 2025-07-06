@@ -1,0 +1,456 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% % Define a custom background colo
+% \begin{document}
+\section*{BST Solved Problems }
+\noindent\textbf{Problem: Deletion in BST}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def deleteNode(root: TreeNode, key: int) -> TreeNode:
+    """
+    Deletes node with given key in BST.
+    Time Complexity: O(h)     Space Complexity: O(h)
+    """
+    if not root:
+        return None
+    if key < root.val:
+        root.left = deleteNode(root.left, key)
+    elif key > root.val:
+        root.right = deleteNode(root.right, key)
+    else:
+        if not root.left:
+            return root.right
+        elif not root.right:
+            return root.left
+        # Node with two children: get inorder successor
+        temp = root.right
+        while temp.left:
+            temp = temp.left
+        root.val = temp.val
+        root.right = deleteNode(root.right, temp.val)
+    return root
+\end{minted}
+
+
+\noindent\textbf{Problem: Floor/Ceil in BST}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def floor_ceil(root: TreeNode, key: int) -> tuple:
+    """
+    Finds floor and ceil values for given key in BST.
+    Time Complexity: O(h)     Space Complexity: O(1)
+    """
+    floor = -10**9
+    ceil = 10**9
+    curr = root
+    
+    while curr:
+        if curr.val == key:
+            return (curr.val, curr.val)
+        elif curr.val < key:
+            floor = max(floor, curr.val)
+            curr = curr.right
+        else:
+            ceil = min(ceil, curr.val)
+            curr = curr.left
+    return (floor if floor != -10**9 else None, ceil if ceil != 10**9 else None)
+\end{minted}
+\noindent\textbf{Inorder Successor and Predecessor in BST}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class TreeNode:
+    def __init__(self, key, left=None, right=None, parent=None):
+        self.key = key
+        self.left = left
+        self.right = right
+        self.parent = parent
+def inorder_successor(node):
+    # Case 1: Right subtree exists
+    if node.right:
+        cur = node.right
+        while cur.left:
+            cur = cur.left
+        return cur
+    # Case 2: No right subtree—climb up
+    cur = node
+    while cur.parent and cur.parent.right is cur:
+        cur = cur.parent
+    return cur.parent
+
+def inorder_predecessor(node):
+    if node.left:
+        cur = node.left
+        while cur.right:
+            cur = cur.right
+        return cur
+    cur = node
+    while cur.parent and cur.parent.left is cur:
+        cur = cur.parent
+    return cur.parent
+\end{minted}
+
+\noindent\textbf{Problem: AVL Tree Rotations}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class AVLNode:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.height = 1
+
+class AVLTree:
+    def insert(self, root, key):
+        """Inserts a key and balances tree using rotations"""
+        # Standard BST insertion
+        if not root:
+            return AVLNode(key)
+        if key < root.key:
+            root.left = self.insert(root.left, key)
+        else:
+            root.right = self.insert(root.right, key)
+        
+        # Update height
+        root.height = 1 + max(self.get_height(root.left), 
+                             self.get_height(root.right))
+        
+        # Balance factor
+        balance = self.get_balance(root)
+        
+        # Left Left Case
+        if balance > 1 and key < root.left.key:
+            return self.right_rotate(root)
+        # Right Right Case
+        if balance < -1 and key > root.right.key:
+            return self.left_rotate(root)
+        # Left Right Case
+        if balance > 1 and key > root.left.key:
+            root.left = self.left_rotate(root.left)
+            return self.right_rotate(root)
+        # Right Left Case
+        if balance < -1 and key < root.right.key:
+            root.right = self.right_rotate(root.right)
+            return self.left_rotate(root)
+        return root
+
+    def left_rotate(self, z):
+        """Left rotation"""
+        y = z.right
+        T2 = y.left
+        
+        # Perform rotation
+        y.left = z
+        z.right = T2
+        
+        # Update heights
+        z.height = 1 + max(self.get_height(z.left), 
+                          self.get_height(z.right))
+        y.height = 1 + max(self.get_height(y.left), 
+                          self.get_height(y.right))
+        return y
+
+    def right_rotate(self, z):
+        """Right rotation"""
+        y = z.left
+        T3 = y.right
+        
+        # Perform rotation
+        y.right = z
+        z.left = T3
+        
+        # Update heights
+        z.height = 1 + max(self.get_height(z.left), 
+                          self.get_height(z.right))
+        y.height = 1 + max(self.get_height(y.left), 
+                          self.get_height(y.right))
+        return y
+
+    def get_height(self, root):
+        if not root:
+            return 0
+        return root.height
+
+    def get_balance(self, root):
+        if not root:
+            return 0
+        return self.get_height(root.left) - self.get_height(root.right)
+\end{minted}
+
+\noindent\textbf{Problem: Fix BST with Two Nodes Swapped}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def recover_bst(root: TreeNode) -> None:
+    """
+    Fixes BST where two nodes are swapped.
+    Time Complexity: O(n)     Space Complexity: O(h)
+    """
+    stack = []
+    curr = root
+    prev = first = middle = last = None
+    
+    # Morris traversal to find swapped nodes
+    while curr:
+        if curr.left:
+            pre = curr.left
+            while pre.right and pre.right != curr:
+                pre = pre.right
+            if not pre.right:
+                pre.right = curr
+                curr = curr.left
+            else:
+                pre.right = None
+                # Process current node
+                if prev and prev.val > curr.val:
+                    if not first:
+                        first = prev
+                        middle = curr
+                    else:
+                        last = curr
+                prev = curr
+                curr = curr.right
+        else:
+            if prev and prev.val > curr.val:
+                if not first:
+                    first = prev
+                    middle = curr
+                else:
+                    last = curr
+            prev = curr
+            curr = curr.right
+    
+    # Swap nodes
+    if last:
+        first.val, last.val = last.val, first.val
+    else:
+        first.val, middle.val = middle.val, first.val
+\end{minted}
+
+\noindent\textbf{Problem: Pair Sum with Given BST (O(logn) space)}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class BSTIterator:
+    def __init__(self, root, reverse=False):
+        self.stack = []
+        self.reverse = reverse
+        self.push_all(root)
+    
+    def push_all(self, node):
+        while node:
+            self.stack.append(node)
+            node = node.right if self.reverse else node.left
+    
+    def next(self) -> int:
+        node = self.stack.pop()
+        self.push_all(node.left if self.reverse else node.right)
+        return node.val
+    
+    def has_next(self) -> bool:
+        return bool(self.stack)
+
+def pair_sum(root: TreeNode, k: int) -> bool:
+    """
+    Checks if two nodes sum to k using BST iterators.
+    Time Complexity: O(n)     Space Complexity: O(logn)
+    """
+    left_iter = BSTIterator(root)
+    right_iter = BSTIterator(root, True)
+    
+    left = left_iter.next() if left_iter.has_next() else None
+    right = right_iter.next() if right_iter.has_next() else None
+    
+    while left < right:
+        total = left + right
+        if total == k:
+            return True
+        elif total < k:
+            left = left_iter.next() if left_iter.has_next() else None
+        else:
+            right = right_iter.next() if right_iter.has_next() else None
+    return False
+\end{minted}
+
+\noindent\textbf{Problem: Largest BST in Binary Tree}
+\begin{minted}[
+bgcolor=bgcolor,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def largest_bst(root: TreeNode) -> int:
+    """
+    Finds size of largest BST subtree.
+    Time Complexity: O(n)     Space Complexity: O(h)
+    """
+    max_size = 0
+    
+    def dfs(node):
+        nonlocal max_size
+        if not node:
+            return 0, float('inf'), float('-inf')
+        
+        left_size, left_min, left_max = dfs(node.left)
+        right_size, right_min, right_max = dfs(node.right)
+        
+        # Check BST property
+        if left_max < node.val < right_min:
+            size = 1 + left_size + right_size
+            max_size = max(max_size, size)
+            return size, min(left_min, node.val), max(right_max, node.val)
+        
+        # Return invalid BST
+        return 0, float('-inf'), float('inf')
+    
+    dfs(root)
+    return max_size
+\end{minted}
+
+
+
+\noindent\textbf{Problem: Find Kth Smallest in BST}
+\begin{minted}[
+bgcolor=bgcolor3,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def kthSmallest(root: TreeNode, k: int) -> int:
+    """
+    Finds kth smallest element in BST (iterative inorder).
+    For Kth largest element in BST (iterative inorder in reverse : right -> node -> left)
+    Time Complexity: O(h + k)     Space Complexity: O(h)
+    """
+    stack = []
+    curr = root
+    while stack or curr:
+        while curr:
+            stack.append(curr)
+            curr = curr.left
+        curr = stack.pop()
+        k -= 1
+        if k == 0:
+            return curr.val
+        curr = curr.right
+\end{minted}
+\noindent\textbf{Problem: Check for BST}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def isValidBST(root: TreeNode) -> bool:
+    """
+    Validates if binary tree is a BST using inorder traversal.
+    Time Complexity: O(n)     Space Complexity: O(h)
+    """
+    prev = None
+    
+    def inorder(node):
+        nonlocal prev
+        if not node:
+            return True
+        if not inorder(node.left):
+            return False
+        if prev and node.val <= prev.val:
+            return False
+        prev = node
+        return inorder(node.right)
+    
+    return inorder(root)
+\end{minted}
+\noindent\textbf{Problem: Finding LCA in BST}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def lowestCommonAncestorBST(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+    """
+    Finds LCA in Binary Search Tree (iterative approach).
+    Time Complexity: O(h)     Space Complexity: O(1)
+    """
+    while root:
+        if p.val < root.val and q.val < root.val:
+            root = root.left
+        elif p.val > root.val and q.val > root.val:
+            root = root.right
+        else:
+            return root
+\end{minted}
+
+% \end{document}

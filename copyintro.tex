@@ -1,0 +1,587 @@
+% % introduction.tex
+% \documentclass[11pt,oneside]{book}
+% \usepackage[utf8]{inputenc}
+% \usepackage[T1]{fontenc}
+% \usepackage{lmodern}
+% \usepackage{ragged2e}
+% \usepackage{setspace}
+% \usepackage{hyperref}
+% \usepackage{minted}
+% \usepackage{xcolor}
+% \usepackage{amssymb}
+% \usepackage{geometry}
+% \geometry{margin=1in}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \usepackage{tikz}
+
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+
+% \begin{document}
+% titlepage.tex
+
+\thispagestyle{empty}
+\begin{center}
+  {\Huge\bfseries A Handbook of Classic Problems in\\
+    Data Structures and Algorithms\par}
+  \vspace{1.5em}
+  {\Large\itshape and Selected Solved Questions\par}
+  \vfill
+  {\Large\scshape SHAHIR HABIB}\
+
+
+    {BCSE, Jadavpur University\par}
+  \vspace{2em}
+  \url{https://github.com/Shahir-Habib}\par
+  \vfill
+\end{center}
+\clearpage
+
+\frontmatter
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+\onehalfspacing
+\justifying
+
+Welcome to this comprehensive guide, designed to be an indispensable resource for mastering essential algorithms and data structures. This book is primarily aimed at an \textbf{intermediate-level audience}—those who already possess a solid understanding of foundational data structures and are familiar with common algorithmic problems. If you are currently immersed in practice and looking to solidify your knowledge, this material is tailored for you.
+
+Purpose of this book is to serve as a powerful \textbf{revision tool}, meticulously covering nearly all concepts pertinent to LeetCode and coding interviews. Each section delves into key techniques, supported by illustrative problems. To further aid your revision and practical understanding, we provide Python code snippets for these problems. These code examples are presented in a non-copyable format, encouraging you to type and internalize the solutions yourself—a proven method for enhancing retention and sharpening problem-solving skills. Use this book to refresh your memory, explore optimization strategies, and tackle critical edge cases across a wide spectrum of algorithmic paradigms.
+
+\chapter*{Final Thoughts Before You Begin}
+\addcontentsline{toc}{chapter}{Final Thoughts Before You Begin}
+\onehalfspacing
+\justifying
+
+Having explored the essential techniques and problem patterns covered in this book, the next crucial step in your journey to algorithmic mastery is consistent practice. We highly recommend applying the concepts learned here to platforms like \textbf{LeetCode} and \textbf{Codeforces}. These platforms offer a vast array of problems that will challenge you to implement, optimize, and debug your solutions, reinforcing the theoretical knowledge gained from this guide. Continuous practice is key to transforming understanding into intuitive problem-solving abilities.
+\newpage
+
+
+\chapter{Core Python Shortcuts \& Tricks}
+\section*{Basic Data Structures}
+\subsection{List Operations}
+\begin{itemize}
+    \item \textbf{List Comprehension}: \texttt{[expr for item in iterable if condition]}
+    \item \textbf{Nested List Comp}: \texttt{[[0]*cols for \_ in range(rows)]}
+    \item \textbf{Reverse List}: \texttt{arr[::-1]} or \texttt{reversed(arr)}
+    \item \textbf{Sort with Key}: \texttt{arr.sort(key=lambda x: x[1])} or \texttt{sorted(arr, key=...)}
+    \item \textbf{Multiple Assignment}: \texttt{a, b = b, a} (swap), \texttt{*rest, last = arr}
+    \item \textbf{Slicing}: \texttt{arr[start:end:step]}, \texttt{arr[-n:]} (last n elements)
+\end{itemize}
+
+\subsection{String Manipulation}
+\begin{itemize}
+    \item \textbf{Split \& Join}: \texttt{''.join(arr)}, \texttt{s.split()}, \texttt{s.split(delimiter)}
+    \item \textbf{String Methods}: \texttt{s.strip()}, \texttt{s.lower()}, \texttt{s.upper()}, \texttt{s.replace(old, new)}
+    \item \textbf{Check Methods}: \texttt{s.isalpha()}, \texttt{s.isdigit()}, \texttt{s.isalnum()}
+    \item \textbf{Format}: \texttt{f"\{var\}"} or \texttt{"\{\}".format(var)}
+\end{itemize}
+
+\subsection{Dictionary \& Set Tricks}
+\begin{itemize}
+    \item \textbf{Default Dict}: \texttt{from collections import defaultdict; dd = defaultdict(list)}
+    \item \textbf{Counter}: \texttt{from collections import Counter; c = Counter(arr)}
+    \item \textbf{Dict Comprehension}: \texttt{\{k: v for k, v in items if condition\}}
+    \item \textbf{Get with Default}: \texttt{dict.get(key, default\_value)}
+    \item \textbf{Set Operations}: \texttt{set1 \& set2}, \texttt{set1 | set2}, \texttt{set1 - set2}
+\end{itemize}
+
+\subsection{Functional Programming}
+\begin{itemize}
+    \item \textbf{Map/Filter}: \texttt{list(map(func, iterable))}, \texttt{list(filter(func, iterable))}
+    \item \textbf{Lambda}: \texttt{lambda x: x**2}, \texttt{lambda x, y: x + y}
+    \item \textbf{Reduce}: \texttt{from functools import reduce; reduce(func, iterable, initial)}
+    \item \textbf{Any/All}: \texttt{any(condition for item in iterable)}, \texttt{all(...)}
+\end{itemize}
+
+\section{Essential Data Structures Implementation}
+
+\subsection{Dynamic Array (List)}
+\begin{minted}[     bgcolor=bgcolor10,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class DynamicArray:
+    def __init__(self):
+        self.data = []
+    
+    def append(self, val): self.data.append(val)  # O(1) amortized
+    def pop(self): return self.data.pop()         # O(1)
+    def insert(self, i, val): self.data.insert(i, val)  # O(n)
+    def remove(self, val): self.data.remove(val)  # O(n)
+    def __getitem__(self, i): return self.data[i]
+    def __len__(self): return len(self.data)
+\end{minted}
+
+\subsection{Linked List}
+\begin{minted}[     bgcolor=bgcolor6,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+    
+    def append(self, val):
+        if not self.head:
+            self.head = ListNode(val)
+        else:
+            curr = self.head
+            while curr.next:
+                curr = curr.next
+            curr.next = ListNode(val)
+    
+    def prepend(self, val):
+        self.head = ListNode(val, self.head)
+    
+    def delete(self, val):
+        if not self.head: return
+        if self.head.val == val:
+            self.head = self.head.next
+            return
+        curr = self.head
+        while curr.next and curr.next.val != val:
+            curr = curr.next
+        if curr.next:
+            curr.next = curr.next.next
+\end{minted}
+
+\subsection{Stack Implementation}
+\begin{minted}[     bgcolor=bgcolor3,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class Stack:
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item): self.items.append(item)    # O(1)
+    def pop(self): return self.items.pop()           # O(1)
+    def peek(self): return self.items[-1] if self.items else None
+    def is_empty(self): return len(self.items) == 0
+    def size(self): return len(self.items)
+
+# Using deque for better performance
+from collections import deque
+stack = deque()  # append(), pop(), [-1] for peek
+\end{minted}
+
+\subsection{Queue Implementation}
+\begin{minted}[     bgcolor=bgcolor4,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+from collections import deque
+
+class Queue:
+    def __init__(self):
+        self.items = deque()
+    
+    def enqueue(self, item): self.items.append(item)      # O(1)
+    def dequeue(self): return self.items.popleft()        # O(1)
+    def front(self): return self.items[0] if self.items else None
+    def is_empty(self): return len(self.items) == 0
+    def size(self): return len(self.items)
+\end{minted}
+
+\subsection{Binary Tree}
+\begin{minted}[     bgcolor=bgcolor5,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+    
+    def inorder(self, node):
+        if node:
+            self.inorder(node.left)
+            print(node.val)
+            self.inorder(node.right)
+    
+    def preorder(self, node):
+        if node:
+            print(node.val)
+            self.preorder(node.left)
+            self.preorder(node.right)
+    
+    def postorder(self, node):
+        if node:
+            self.postorder(node.left)
+            self.postorder(node.right)
+            print(node.val)
+    
+    def level_order(self):
+        if not self.root: return
+        queue = deque([self.root])
+        while queue:
+            node = queue.popleft()
+            print(node.val)
+            if node.left: queue.append(node.left)
+            if node.right: queue.append(node.right)
+\end{minted}
+
+\subsection{Binary Search Tree}
+\begin{minted}[     bgcolor=bgcolor4,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class BST:
+    def __init__(self):
+        self.root = None
+    
+    def insert(self, val):
+        self.root = self._insert(self.root, val)
+    
+    def _insert(self, node, val):
+        if not node:
+            return TreeNode(val)
+        if val < node.val:
+            node.left = self._insert(node.left, val)
+        else:
+            node.right = self._insert(node.right, val)
+        return node
+    
+    def search(self, val):
+        return self._search(self.root, val)
+    
+    def _search(self, node, val):
+        if not node or node.val == val:
+            return node
+        if val < node.val:
+            return self._search(node.left, val)
+        return self._search(node.right, val)
+\end{minted}
+
+\subsection{Min/Max Heap}
+\begin{minted}[     bgcolor=bgcolor9,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+import heapq
+
+class MinHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def push(self, val): heapq.heappush(self.heap, val)
+    def pop(self): return heapq.heappop(self.heap)
+    def peek(self): return self.heap[0] if self.heap else None
+    def size(self): return len(self.heap)
+
+class MaxHeap:
+    def __init__(self):
+        self.heap = []
+    
+    def push(self, val): heapq.heappush(self.heap, -val)
+    def pop(self): return -heapq.heappop(self.heap)
+    def peek(self): return -self.heap[0] if self.heap else None
+\end{minted}
+
+\subsection{Trie (Prefix Tree)}
+\begin{minted}[     bgcolor=bgcolor8,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end = True
+    
+    def search(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return node.is_end
+    
+    def starts_with(self, prefix):
+        node = self.root
+        for char in prefix:
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        return True
+\end{minted}
+
+\subsection{Graph Representations}
+\begin{minted}[     bgcolor=bgcolor10,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+# Adjacency List
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+    
+    def add_edge(self, u, v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)  # For undirected graph
+    
+    def dfs(self, start, visited=None):
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        print(start)
+        for neighbor in self.graph[start]:
+            if neighbor not in visited:
+                self.dfs(neighbor, visited)
+    
+    def bfs(self, start):
+        visited = set([start])
+        queue = deque([start])
+        while queue:
+            node = queue.popleft()
+            print(node)
+            for neighbor in self.graph[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+# Adjacency Matrix
+adj_matrix = [[0]*n for _ in range(n)]  # n x n matrix
+\end{minted}
+
+\subsection{Union Find (Disjoint Set)}
+\begin{minted}[     bgcolor=bgcolor4,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        self.components = n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # Path compression
+        return self.parent[x]
+    
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+        self.components -= 1
+        return True
+    
+    def connected(self, x, y):
+        return self.find(x) == self.find(y)
+\end{minted}
+
+\section{Algorithm Patterns \& Templates}
+
+\subsection{Binary Search Template}
+\begin{minted}[     bgcolor=bgcolor6,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+# Find leftmost/rightmost occurrence
+def binary_search_left(arr, target):
+    left, right = 0, len(arr)
+    while left < right:
+        mid = (left + right) // 2
+        if arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+\end{minted}
+
+\subsection{Two Pointers Template}
+\begin{minted}[     bgcolor=bgcolor2,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+# Opposite direction
+def two_sum_sorted(arr, target):
+    left, right = 0, len(arr) - 1
+    while left < right:
+        current_sum = arr[left] + arr[right]
+        if current_sum == target:
+            return [left, right]
+        elif current_sum < target:
+            left += 1
+        else:
+            right -= 1
+    return []
+
+# Same direction (sliding window)
+def sliding_window(arr, k):
+    left = 0
+    for right in range(len(arr)):
+        # Expand window
+        while condition_violated:
+            # Shrink window
+            left += 1
+        # Update result
+\end{minted}
+
+\subsection{Backtracking Template}
+\begin{minted}[     bgcolor=bgcolor7,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+def backtrack(path, choices):
+    if is_valid_solution(path):
+        result.append(path[:])  # Make a copy
+        return
+    
+    for choice in choices:
+        if is_valid_choice(choice, path):
+            path.append(choice)  # Make choice
+            backtrack(path, get_next_choices(choices, choice))
+            path.pop()  # Undo choice
+\end{minted}
+
+\subsection{Dynamic Programming Patterns}
+\begin{minted}[     bgcolor=bgcolor,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+# 1D DP
+dp = [0] * (n + 1)
+for i in range(1, n + 1):
+    dp[i] = dp[i-1] + dp[i-2]  # Example: Fibonacci
+
+# 2D DP
+dp = [[0] * (m + 1) for _ in range(n + 1)]
+for i in range(1, n + 1):
+    for j in range(1, m + 1):
+        dp[i][j] = max(dp[i-1][j], dp[i][j-1])  # Example: Grid paths
+
+# Memoization
+from functools import lru_cache
+@lru_cache(None)
+def dp(i, j):
+    if base_case:
+        return result
+    return recurrence_relation
+\end{minted}
+
+\section{Important Built-in Functions \& Libraries}
+
+\subsection{Essential Imports}
+\begin{minted}[     bgcolor=bgcolor9,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+from collections import defaultdict, Counter, deque, OrderedDict
+from functools import lru_cache, reduce
+from itertools import combinations, permutations, product, accumulate
+from bisect import bisect_left, bisect_right, insort
+import heapq
+import math
+import sys
+\end{minted}
+
+\subsection{Useful Functions}
+\begin{itemize}
+    \item \textbf{Math}: \texttt{math.gcd(a, b)}, \texttt{math.sqrt(x)}, \texttt{math.ceil(x)}, \texttt{math.floor(x)}
+    \item \textbf{Min/Max}: \texttt{min(arr)}, \texttt{max(arr)}, \texttt{min(a, b, c)}
+    \item \textbf{Sum}: \texttt{sum(arr)}, \texttt{sum(arr, start\_value)}
+    \item \textbf{Enumerate}: \texttt{for i, val in enumerate(arr):}
+    \item \textbf{Zip}: \texttt{for a, b in zip(arr1, arr2):}
+    \item \textbf{Range}: \texttt{range(start, stop, step)}
+\end{itemize}
+
+\subsection{String \& Character Operations}
+\begin{minted}[     bgcolor=bgcolor,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+# ASCII values
+ord('a')  # 97
+chr(97)   # 'a'
+
+# String to list and back
+list("hello")  # ['h', 'e', 'l', 'l', 'o']
+''.join(['h', 'e', 'l', 'l', 'o'])  # "hello"
+
+# Check character types
+char.isalpha(), char.isdigit(), char.isalnum(), char.islower(), char.isupper()
+\end{minted}
+
+\section{Time \& Space Complexity Quick Reference}
+
+\subsection{Common Operations}
+\begin{itemize}
+    \item \textbf{List}: Access $O(1)$, Search $O(n)$, Insert/Delete $O(n)$, Append $O(1)$
+    \item \textbf{Dict/Set}: Access/Insert/Delete $O(1)$ average, $O(n)$ worst
+    \item \textbf{Heap}: Insert/Delete $O(\log n)$, Peek $O(1)$
+    \item \textbf{Sorting}: $O(n \log n)$ for comparison-based, $O(n+k)$ for counting sort
+\end{itemize}
+
+\subsection{Algorithm Complexities}
+\begin{itemize}
+    \item \textbf{Binary Search}: $O(\log n)$
+    \item \textbf{DFS/BFS}: $O(V + E)$ for graphs
+    \item \textbf{Dijkstra}: $O((V + E) \log V)$ with heap
+    \item \textbf{Union Find}: $O(\alpha(n))$ amortized (inverse Ackermann)
+\end{itemize}
+
+\section{Input/Output Optimization}
+
+\subsection{Fast I/O for Competitive Programming}
+\begin{minted}[     bgcolor=bgcolor3,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+import sys
+input = sys.stdin.readline
+
+# Read integers
+n = int(input())
+arr = list(map(int, input().split()))
+
+# Read multiple test cases
+t = int(input())
+for _ in range(t):
+    # Process each test case
+    pass
+
+# Output
+print(*arr)  # Print list elements separated by space
+print(f"{result:.6f}")  # Formatted output
+\end{minted}
+
+\section{Common Pitfalls \& Tips}
+
+\subsection{List Operations}
+\begin{itemize}
+    \item \textbf{Shallow vs Deep Copy}: \texttt{arr[:]} vs \texttt{copy.deepcopy(arr)}
+    \item \textbf{List Multiplication}: \texttt{[[0]*3]*3} creates shared references
+    \item \textbf{Correct Way}: \texttt{[[0]*3 for \_ in range(3)]}
+\end{itemize}
+
+\subsection{Integer Operations}
+\begin{itemize}
+    \item \textbf{Integer Division}: \texttt{//} for floor division, \texttt{/} for float division
+    \item \textbf{Modular Arithmetic}: \texttt{(a + b) \% MOD}, \texttt{pow(base, exp, MOD)}
+    \item \textbf{Infinity}: \texttt{float('inf')}, \texttt{-float('inf')}
+\end{itemize}
+
+\subsection{Edge Cases to Remember}
+\begin{itemize}
+    \item Empty input arrays
+    \item Single element arrays
+    \item Negative numbers
+    \item Integer overflow (Python handles automatically)
+    \item Zero division
+    \item Null/None values in trees/linked lists
+\end{itemize}
+
+\subsection{Debugging Tips}
+\begin{minted}[     bgcolor=bgcolor10,     frame=lines,     framesep=5mm,     rulecolor=\color{black},     linenos,     numbersep=5pt,     fontsize=\normalsize ]{python}
+# Print debugging
+print(f"Debug: {variable}", file=sys.stderr)
+
+# Assert statements
+assert condition, "Error message"
+
+# Type hints (helpful for readability)
+def function(arr: List[int], target: int) -> bool:
+    pass
+\end{minted}
+
+%\end{document}

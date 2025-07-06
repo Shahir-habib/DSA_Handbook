@@ -1,0 +1,431 @@
+% \documentclass[a4paper,10pt]{article}
+% \usepackage[utf8]{inputenc}
+% \usepackage{geometry}
+% \usepackage[table]{xcolor}
+% \usepackage{colortbl}
+% \usepackage{color,soul}
+% \geometry{margin=0.8in}
+% \usepackage{xcolor}
+% \usepackage{tikz}
+% \usepackage{minted}
+% \definecolor{bgcolor}{rgb}{0.8, 0.9, 0.5} % 
+% \definecolor{bgcolor1}{rgb}{0.95, 0.95, 0.95} % Light Gray
+% \definecolor{bgcolor2}{rgb}{0.85, 0.92, 1.0}  % Soft Blue
+% \definecolor{bgcolor3}{rgb}{0.9, 0.85, 1.0}   % Light Purple
+% \definecolor{bgcolor4}{rgb}{0.95, 0.88, 0.76} % Warm Beige
+% \definecolor{bgcolor5}{rgb}{0.8, 0.95, 0.8}   % Gentle Green
+% \definecolor{bgcolor6}{rgb}{1.0, 0.87, 0.87}  % Pastel Red
+% \definecolor{bgcolor7}{rgb}{0.86, 0.93, 0.83} % Mint Green
+% \definecolor{bgcolor8}{rgb}{0.98, 0.85, 0.94} % Soft Pink
+% \definecolor{bgcolor9}{rgb}{0.87, 0.94, 0.98} % Sky Blue
+% \definecolor{bgcolor10}{rgb}{0.96, 0.96, 0.82} % Pale Yellow
+% 
+% \begin{document}
+% Rat in a Maze
+\noindent\textbf{Problem: Rat in a Maze}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def rat_in_maze(maze: List[List[int]]) -> List[List[int]]:
+    """
+    Finds path for rat from (0,0) to (n-1,n-1) in maze.
+    Time Complexity: O(4^(n^2)), Space Complexity: O(n^2)
+    """
+    n = len(maze)
+    path = [[0]*n for _ in range(n)]
+    
+    def is_safe(x, y):
+        return 0 <= x < n and 0 <= y < n and maze[x][y] == 1
+    
+    def backtrack(x, y):
+        if x == n-1 and y == n-1:
+            path[x][y] = 1
+            return True
+        if is_safe(x, y):
+            path[x][y] = 1
+            # Move right
+            if backtrack(x, y+1):
+                return True
+            # Move down
+            if backtrack(x+1, y):
+                return True
+            path[x][y] = 0  # Backtrack
+        return False
+        
+    backtrack(0, 0)
+    return path
+\end{minted}
+
+% N-Queen Problem
+\noindent\textbf{Problem: N-Queen Problem}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def solve_n_queens(n: int) -> List[List[str]]:
+    """
+    Places n queens on nxn chessboard such that no two queens attack each other.
+    Time Complexity: O(n!), Space Complexity: O(n^2)
+    """
+    def is_safe(row, col):
+        # Check column
+        for i in range(row):
+            if board[i][col] == 'Q':
+                return False
+        # Check upper left diagonal
+        for i, j in zip(range(row-1, -1, -1), range(col-1, -1, -1)):
+            if board[i][j] == 'Q':
+                return False
+        # Check upper right diagonal
+        for i, j in zip(range(row-1, -1, -1), range(col+1, n)):
+            if board[i][j] == 'Q':
+                return False
+        return True
+        
+    def backtrack(row):
+        if row == n:
+            result.append(["".join(r) for r in board])
+            return
+        for col in range(n):
+            if is_safe(row, col):
+                board[row][col] = 'Q'
+                backtrack(row+1)
+                board[row][col] = '.'
+                
+    board = [['.']*n for _ in range(n)]
+    result = []
+    backtrack(0)
+    return result
+\end{minted}
+
+% Permutation without Forbidden Substring
+\noindent\textbf{Problem: Permutation without Forbidden Substring}
+\begin{minted}[
+bgcolor=bgcolor7,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def valid_permutations(s: str, forbidden: str) -> List[str]:
+    """
+    Generates permutations of s that don't contain forbidden substring.
+    Time Complexity: O(n! * n), Space Complexity: O(n)
+    """
+    def backtrack(start):
+        if start == len(chars):
+            perm = "".join(chars)
+            if forbidden not in perm:
+                result.append(perm)
+            return
+        for i in range(start, len(chars)):
+            chars[start], chars[i] = chars[i], chars[start]
+            backtrack(start+1)
+            chars[start], chars[i] = chars[i], chars[start]
+            
+    result = []
+    chars = list(s)
+    backtrack(0)
+    return result
+\end{minted}
+
+% Sudoku Solver
+\noindent\textbf{Problem: Sudoku Solver}
+\begin{minted}[
+bgcolor=bgcolor5,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def solve_sudoku(board: List[List[str]]) -> None:
+    """
+    Solves 9x9 Sudoku puzzle in-place using backtracking.
+    Time Complexity: O(9^(n^2)), Space Complexity: O(1)
+    """
+    def is_valid(row, col, num):
+        # Check row
+        for i in range(9):
+            if board[row][i] == num:
+                return False
+        # Check column
+        for i in range(9):
+            if board[i][col] == num:
+                return False
+        # Check 3x3 box
+        start_row, start_col = 3 * (row // 3), 3 * (col // 3)
+        for i in range(3):
+            for j in range(3):
+                if board[start_row+i][start_col+j] == num:
+                    return False
+        return True
+        
+    def backtrack():
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == '.':
+                    for num in map(str, range(1, 10)):
+                        if is_valid(i, j, num):
+                            board[i][j] = num
+                            if backtrack():
+                                return True
+                            board[i][j] = '.'  # Backtrack
+                    return False
+        return True  # All cells filled
+        
+    backtrack()
+\end{minted}
+
+% Combination Sum
+\noindent\textbf{Problem: Combination Sum}
+\begin{minted}[
+bgcolor=bgcolor8,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def combination_sum(candidates: List[int], target: int) -> List[List[int]]:
+    """
+    Finds all combinations that sum to target (reuse allowed).
+    Time Complexity: O(2^target), Space Complexity: O(target)
+    """
+    def backtrack(start, path, current_sum):
+        if current_sum == target:
+            result.append(path[:])
+            return
+        if current_sum > target:
+            return
+        for i in range(start, len(candidates)):
+            path.append(candidates[i])
+            backtrack(i, path, current_sum + candidates[i])
+            path.pop()
+            
+    result = []
+    backtrack(0, [], 0)
+    return result
+\end{minted}
+
+% Generate Parentheses
+\noindent\textbf{Problem: Generate Parentheses}
+\begin{minted}[
+bgcolor=bgcolor1,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def generate_parenthesis(n: int) -> List[str]:
+    """
+    Generates all valid n pairs of parentheses.
+    Time Complexity: O(4^n/root(N)), Space Complexity: O(n)
+    """
+    def backtrack(s, left, right):
+        if len(s) == 2*n:
+            result.append(s)
+            return
+        if left < n:
+            backtrack(s+'(', left+1, right)
+        if right < left:
+            backtrack(s+')', left, right+1)
+            
+    result = []
+    backtrack('', 0, 0)
+    return result
+\end{minted}
+
+% Subset Sum = K (Print All Subsets)
+\noindent\textbf{Problem: Subset Sum = K (Print All Subsets)}
+\begin{minted}[
+bgcolor=bgcolor9,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def subset_sum(nums: List[int], target: int) -> List[List[int]]:
+    """
+    Finds all subsets that sum to target.
+    Time Complexity: O(2^n), Space Complexity: O(n)
+    """
+    def backtrack(start, path, current_sum):
+        if current_sum == target:
+            result.append(path[:])
+            return
+        if start >= len(nums) or current_sum > target:
+            return
+        for i in range(start, len(nums)):
+            path.append(nums[i])
+            backtrack(i+1, path, current_sum + nums[i])
+            path.pop()
+            
+    result = []
+    nums.sort()
+    backtrack(0, [], 0)
+    return result
+\end{minted}
+
+% Combination Sum II
+\noindent\textbf{Problem: Combination Sum II}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def combination_sum2(candidates: List[int], target: int) -> List[List[int]]:
+    """
+    Finds unique combinations that sum to target (each used once).
+    Time Complexity: O(2^n), Space Complexity: O(n)
+    """
+    def backtrack(start, path, current_sum):
+        if current_sum == target:
+            result.append(path[:])
+            return
+        if current_sum > target:
+            return
+        for i in range(start, len(candidates)):
+            # Skip duplicates
+            if i > start and candidates[i] == candidates[i-1]:
+                continue
+            path.append(candidates[i])
+            backtrack(i+1, path, current_sum + candidates[i])
+            path.pop()
+            
+    result = []
+    candidates.sort()
+    backtrack(0, [], 0)
+    return result
+\end{minted}
+
+% Subset Sum II (All Unique Subsets)
+\noindent\textbf{Problem: Subset Sum II (All Unique Subsets)}
+\begin{minted}[
+bgcolor=bgcolor4,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def subsets_with_dup(nums: List[int]) -> List[List[int]]:
+    """
+    Generates all unique subsets (with duplicates in input).
+    Time Complexity: O(2^n), Space Complexity: O(n)
+    """
+    def backtrack(start, path):
+        result.append(path[:])
+        for i in range(start, len(nums)):
+            # Skip duplicates
+            if i > start and nums[i] == nums[i-1]:
+                continue
+            path.append(nums[i])
+            backtrack(i+1, path)
+            path.pop()
+            
+    nums.sort()
+    result = []
+    backtrack(0, [])
+    return result
+\end{minted}
+
+% Palindrome Partitioning
+\noindent\textbf{Problem: Palindrome Partitioning}
+\begin{minted}[
+bgcolor=bgcolor10,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def partition_palindrome(s: str) -> List[List[str]]:
+    """
+    Partitions string such that every substring is palindrome.
+    Time Complexity: O(n*2^n), Space Complexity: O(n^2)
+    """
+    def is_palindrome(sub):
+        return sub == sub[::-1]
+        
+    def backtrack(start, path):
+        if start == len(s):
+            result.append(path[:])
+            return
+        for end in range(start+1, len(s)+1):
+            substr = s[start:end]
+            if is_palindrome(substr):
+                path.append(substr)
+                backtrack(end, path)
+                path.pop()
+                
+    result = []
+    backtrack(0, [])
+    return result
+\end{minted}
+
+% M-Coloring of Graph
+\noindent\textbf{Problem: M-Coloring of Graph}
+\begin{minted}[
+bgcolor=bgcolor2,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+def graph_coloring(graph: List[List[int]], m: int) -> bool:
+    """
+    Checks if graph can be colored with m colors (adjacent nodes different colors).
+    Time Complexity: O(m^n), Space Complexity: O(n)
+    """
+    n = len(graph)
+    colors = [-1] * n
+    
+    def is_safe(node, color):
+        for neighbor in range(n):
+            if graph[node][neighbor] == 1 and colors[neighbor] == color:
+                return False
+        return True
+        
+    def backtrack(node):
+        if node == n:
+            return True
+        for color in range(m):
+            if is_safe(node, color):
+                colors[node] = color
+                if backtrack(node+1):
+                    return True
+                colors[node] = -1  # Backtrack
+        return False
+        
+    return backtrack(0)
+\end{minted}
+
+% \end{document}
