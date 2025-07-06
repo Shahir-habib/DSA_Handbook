@@ -23,7 +23,7 @@
 % % Define a custom background colo
 % \begin{document}
 \section*{String Problem Solutions}
-\noindent\textbf{Problem:} Is Subsequence of Other
+\noindent\textbf{Problem: Is Subsequence of Other}
 \begin{minted}[
 bgcolor=bgcolor5,
 frame=lines,
@@ -48,6 +48,33 @@ def is_subsequence(s: str, t: str) -> bool:
         j += 1
     # if we’ve consumed all of s, it’s a subsequence
     return i == len(s)
+\end{minted}
+\noindent\textbf{Problem: Group the Anagrams}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from collections import defaultdict
+from typing import List
+
+def group_anagrams(words: List[str]) -> List[List[str]]:
+    """
+    Group a list of words into anagrams.
+    """
+    buckets = defaultdict(list)
+    
+    for w in words:
+        # sort the word’s letters to form the key
+        key = tuple(sorted(w))
+        buckets[key].append(w)
+    
+    # return the grouped anagrams
+    return list(buckets.values())
 \end{minted}
 \noindent\textbf{Problem:} Naive Pattern Searching
 \begin{minted}[
@@ -75,7 +102,7 @@ def naive_pattern_search(text: str, pat: str) -> List[int]:
             matches.append(i)
     return matches
 \end{minted}
-\noindent\textbf{Problem:} Rabin–Karp Algorithm
+\noindent\textbf{Problem: Rabin–Karp Algorithm}
 \begin{minted}[
 bgcolor=bgcolor7,
 frame=lines,

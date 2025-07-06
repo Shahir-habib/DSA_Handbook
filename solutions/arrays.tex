@@ -1154,7 +1154,7 @@ def max_product_subarray(nums: List[int]) -> int:
 def find_rotation_count(nums: List[int]) -> int:
     """
     Finds the number of times a sorted array has been rotated.
-    This is equivalent to finding the index of the minimum element using binary search. [9]
+    This is equivalent to finding the index of the minimum element using binary search.
     Time Complexity: O(log n), Space: O(1)
     """
     n = len(nums)
@@ -1237,5 +1237,104 @@ def min_window(s: str, t: str) -> str:
 
     return "" if ans[0] == float("inf") else s[ans[1] : ans[2] + 1]
 
+\end{minted}
+
+\noindent\textbf{Problem:Duplicate in Array (0 ≤ num < 32000) Memory Constraint}
+\begin{minted}[
+    bgcolor=bgcolor5,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def find_duplicate(nums):
+    """
+    Return the first duplicate found in `nums` (0 ≤ num < 32000).
+    Uses ~4 KB of extra memory.
+    # For C++, you can use:   std::bitset<32000> seen;
+    """
+    # 32000 bits → 4000 bytes
+    bitvec = bytearray(4000)
+
+    for x in nums:
+        if not (0 <= x < 32000):
+            raise ValueError("Value out of allowed range 0–31999")
+        byte_idx = x // 8
+        bit_mask = 1 << (x & 7)
+        if bitvec[byte_idx] & bit_mask:
+            return x  # duplicate found
+        bitvec[byte_idx] |= bit_mask
+
+    return None  # no duplicate
+\end{minted}
+
+\noindent\textbf{Problem: Find Missing Integer 4GB with Memory Constraint}
+\begin{minted}[
+    bgcolor=bgcolor6,
+    frame=lines,
+    framesep=5mm,
+    rulecolor=\color{black},
+    linenos,
+    numbersep=5pt,
+    fontsize=\normalsize
+]{python}
+def find_missing_1gb(stream):
+    """
+    stream: iterable of ints in [0, 2**32)
+    Returns one integer not present in the stream.
+    """
+    # 2^32 bits → 2^29 bytes = 512 MB
+    bitvec = bytearray(1 << 29)
+
+    for x in stream:
+        # Bounds check optional if guaranteed
+        idx = x >> 3             # byte index
+        mask = 1 << (x & 7)      # bit within byte
+        bitvec[idx] |= mask
+
+    # Scan bitvec for a zero bit
+    for idx, byte in enumerate(bitvec):
+        if byte != 0xFF:  # some bit is zero here
+            for b in range(8):
+                if not (byte & (1 << b)):
+                    return (idx << 3) + b
+
+    return None  # all present
+
+
+def find_missing_50mb(stream):
+    """
+    stream: iterable of ints in [0, 2**32)
+    Returns one integer not present in the stream.
+    """
+    BUCKET_SHIFT = 16
+    BUCKET_SIZE  = 1 << BUCKET_SHIFT  # 65536
+
+    # 1) First pass: count per high-16-bit bucket
+    counts = [0] * BUCKET_SIZE
+    for x in stream:
+        counts[x >> BUCKET_SHIFT] += 1
+
+    # 2) Find bucket with missing slot
+    target_bucket = next(i for i, c in enumerate(counts) if c < BUCKET_SIZE)
+
+    # 3) Second pass: bit-vector for that bucket
+    bitvec = bytearray(BUCKET_SIZE // 8)
+    base = target_bucket << BUCKET_SHIFT
+    for x in stream:
+        if (x >> BUCKET_SHIFT) == target_bucket:
+            offset = x & (BUCKET_SIZE - 1)
+            bitvec[offset >> 3] |= 1 << (offset & 7)
+
+    # 4) Scan for missing bit
+    for idx, byte in enumerate(bitvec):
+        if byte != 0xFF:
+            for b in range(8):
+                if not (byte & (1 << b)):
+                    return base + (idx << 3) + b
+
+    return None
 \end{minted}
 % \end{document}

@@ -60,7 +60,121 @@ def xor_1_to_n(n: int) -> int:
     return 0
 
     \end{minted}
+    \noindent\textbf{Problem: Convert Number from Any Base to Any Base}
+    \begin{minted}[
+        bgcolor=bgcolor3,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    import string
+    # Digit map for bases up to 36
+    _DIGITS = string.digits + string.ascii_uppercase
 
+    def base_to_decimal(num_str: str, base_from: int) -> int:
+        """Convert num_str in base_from to decimal integer."""
+        num_str = num_str.strip().upper()
+        sign = -1 if num_str.startswith('-') else 1
+        if num_str[0] in '+-':
+            num_str = num_str[1:]
+        value = 0
+        for ch in num_str:
+            digit = _DIGITS.index(ch)
+            if digit >= base_from:
+                raise ValueError(f"Invalid digit {ch} for base {base_from}")
+            value = value * base_from + digit
+        return sign * value
+
+    def decimal_to_base(n: int, base_to: int) -> str:
+        """Convert decimal integer n to a string in target base."""
+        if n == 0:
+            return "0"
+        sign = '-' if n < 0 else ''
+        n = abs(n)
+        digits = []
+        while n > 0:
+            digits.append(_DIGITS[n % base_to])
+            n //= base_to
+        return sign + ''.join(reversed(digits))
+
+    def convert_base(num_str: str, base_from: int, base_to: int) -> str:
+        """Convert num_str from base_from to base_to.
+        Time Complexity: O(log(num) + log(base_from) + log(base_to))
+        """
+        dec = base_to_decimal(num_str, base_from)
+        return decimal_to_base(dec, base_to)
+    \end{minted}
+    \noindent\textbf{Problem: Floating Point to Binary Conversion}
+    \begin{minted}[
+        bgcolor=bgcolor7,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    def float_to_binary(num: float, frac_bits: int = 16) -> str:
+        """
+        Time Complexity: O(log(num) + frac_bits)
+        Convert a floating-point number to binary string representation.
+        frac_bits (int): Number of bits to represent the fractional part.
+        """
+        if num < 0:
+            return '-' + float_to_binary(-num, frac_bits)
+
+        # Separate integer and fractional parts
+        integer_part = int(num)
+        fractional_part = num - integer_part
+
+        # Convert integer part to binary
+        int_bin = bin(integer_part)[2:]
+
+        # Convert fractional part to binary
+        frac_bin = []
+        while fractional_part > 0 and len(frac_bin) < frac_bits:
+            fractional_part *= 2
+            bit = int(fractional_part)
+            frac_bin.append(str(bit))
+            fractional_part -= bit  
+
+        return int_bin + '.' + ''.join(frac_bin) if frac_bin else int_bin
+
+    \end{minted}
+    \noindent\textbf{Problem: Longest Sequence of 1s by One Bit Flip}
+    \begin{minted}[
+        bgcolor=bgcolor4,
+        frame=lines,
+        framesep=5mm,
+        rulecolor=\color{black},
+        linenos,
+        numbersep=5pt,
+        fontsize=\normalsize
+    ]{python}
+    def longest_sequence_after_flip(n: int) -> int:
+        if ~n == 0:
+            return n.bit_length()  # All 1s
+
+        max_len = 0
+        current_len = 0
+        prev_len = 0
+
+        while n != 0:
+            if n & 1:
+                current_len += 1
+            else:
+                # If next bit is 0, reset prev_len to 0
+                prev_len = 0 if (n & 2) == 0 else current_len
+                current_len = 0
+            max_len = max(max_len, prev_len + current_len + 1)
+            n >>= 1
+
+        return max_len
+
+    \end{minted}
     \noindent\textbf{Problem: Two Odd Occurring Numbers}
     \begin{minted}[
         bgcolor=bgcolor5,

@@ -431,6 +431,59 @@ def max_bridges(north: List[int], south: List[int]) -> int:
             lis[idx] = val
     return len(lis)
 \end{minted}
+\noindent\textbf{Problem : Stack of Boxes with Maximum Height}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,    
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+from typing import List
+from dataclasses import dataclass
+@dataclass
+class Box:
+    w: int
+    h: int
+    d: int
+
+    def base_area(self) -> int:
+        return self.w * self.d
+
+def all_rotations(boxes: List[Box]) -> List[Box]:
+    """Generate all 3 rotations of each box, 
+       ensuring w <= d for consistent base comparison."""
+    rots = []
+    for b in boxes:
+        w, h, d = b.w, b.h, b.d
+        rots += [
+            Box(min(w, d), h, max(w, d)),
+            Box(min(h, d), w, max(h, d)),
+            Box(min(w, h), d, max(w, h)),
+        ]
+    return rots
+
+def max_stack_height(boxes: List[Box]) -> int:
+    """Return the maximum stack height obtainable."""
+    # 1. Generate rotations and sort by base area desc
+    rots = sorted(all_rotations(boxes), 
+                  key=lambda b: b.base_area(), 
+                  reverse=True)
+    n = len(rots)
+    # 2. DP array: max height with box i at top
+    dp = [b.h for b in rots]
+
+    # 3. Compute LIS-style DP
+    for i in range(1, n):
+        for j in range(i):
+            if (rots[i].w < rots[j].w and
+                rots[i].d < rots[j].d):
+                dp[i] = max(dp[i], dp[j] + rots[i].h)
+
+    return max(dp) if dp else 0
+\end{minted}
 \noindent\textbf{Problem: 0-1 Knapsack}
 \begin{minted}[
 bgcolor=bgcolor,

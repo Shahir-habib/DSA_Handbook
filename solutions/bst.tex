@@ -453,4 +453,80 @@ def lowestCommonAncestorBST(root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNod
             return root
 \end{minted}
 
+\noindent\textbf{Problem: Rank from Stream}
+\begin{minted}[
+bgcolor=bgcolor6,
+frame=lines,
+framesep=5mm,
+rulecolor=\color{black},
+linenos,
+numbersep=5pt,
+fontsize=\normalsize
+]{python}
+class RankNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        # number of DISTINCT nodes in left subtree
+        self.left_size = 0
+        # count duplicates of this value
+        self.dup_count = 1
+
+class StreamRank:
+    def __init__(self):
+        self.root = None
+
+    def track(self, x: int) -> None:
+        """Insert x into our BST, updating left_size only for new values."""
+        if not self.root:
+            self.root = RankNode(x)
+        else:
+            self._insert(self.root, x)
+
+    def _insert(self, node: RankNode, x: int) -> bool:
+        """
+        Insert x under node.
+        Return True if a new node was created (i.e. distinct value),
+        False if we just incremented dup_count.
+        """
+        if x == node.val:
+            node.dup_count += 1
+            return False
+        elif x < node.val:
+            if node.left:
+                inserted = self._insert(node.left, x)
+            else:
+                node.left = RankNode(x)
+                inserted = True
+            if inserted:
+                node.left_size += 1
+            return inserted
+        else:  # x > node.val
+            if node.right:
+                return self._insert(node.right, x)
+            else:
+                node.right = RankNode(x)
+                return True
+
+    def get_rank(self, x: int) -> int:
+        """
+        Return the rank of x:
+        number of DISTINCT values less than x in the stream so far.
+        """
+        return self._get_rank(self.root, x)
+
+    def _get_rank(self, node: RankNode, x: int) -> int:
+        if not node:
+            return 0
+        if x == node.val:
+            return node.left_size
+        elif x < node.val:
+            return self._get_rank(node.left, x)
+        else:
+            # all nodes in left subtree + this node’s duplicates
+            return node.left_size + node.dup_count + self._get_rank(node.right, x)
+\end{minted}
+
+
 % \end{document}
