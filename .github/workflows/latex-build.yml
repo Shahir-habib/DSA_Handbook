@@ -20,7 +20,7 @@ jobs:
 
       # Step 2: Set up LaTeX environment
       - name: Set up LaTeX
-        uses: goostman/setup-latex-action@v1
+        uses: dante-ev/setup-texlive-action@v1
         with:
           texlive_version: '2020'  # You can specify which version of TeX Live to use
 
@@ -35,7 +35,7 @@ jobs:
 
       # Step 4: Upload the PDF as a build artifact
       - name: Upload PDF
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: book-pdf
           path: build/book.pdf
