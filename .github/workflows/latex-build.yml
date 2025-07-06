@@ -26,7 +26,11 @@ jobs:
           extra_system_packages: "py-pygments"
           args: -pdf -f -file-line-error -interaction=nonstopmode -shell-escape
           latexmk_shell_escape: true
-  
+          extra_args: ["-bibtex-cond"]
+
+      - name: Clean LaTeX build files
+      - run: latexmk -C
+
       - name: Move PDF into docs/
         run: |
           mkdir -p docs

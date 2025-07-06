@@ -16,5 +16,5 @@ intro.tex
 # *.fls
 
 # Editor and OS specific files
-.DS_Store
-*.swp
+# .DS_Store
+# *.swp
