@@ -11,23 +11,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Install Python & Pygments
-      - name: Set up Python & install Pygments
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-      - run: pip install Pygments
-
-      # Compile with shell‑escape
-      - name: Compile LaTeX (with minted support)
-        uses: xu-cheng/latex-action@v2
+ # 2. Compile with TeXLive (latexmk handles multi-pass)
+      - name: Compile LaTeX with minted support
+        uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
-          compiler: pdflatex
-          args: -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
-          # then run pdflatex twice:
-      - run: pdflatex -shell-escape main.tex
-      - run: pdflatex -shell-escape main.tex
+          texlive_version: latest
+
+          # Install Python & Pygments inside the container
+          extra_system_packages: |
+            python3
+            py3-pip
+          pre_compile: |
+            pip3 install Pygments
+
+          # Use latexmk (default) for multi-pass (TOC, cross-refs)
+          compiler: latexmk
+          args: -pdf -shell-escape -file-line-error -halt-on-error \
+                -interaction=nonstopmode
 
       - name: Move PDF into docs/
         run: |
