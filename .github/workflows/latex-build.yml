@@ -11,12 +11,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Compile LaTeX
+      # Install Python & Pygments
+      - name: Set up Python & install Pygments
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: pip install Pygments
+
+      # Compile with shell‑escape
+      - name: Compile LaTeX (with minted support)
         uses: xu-cheng/latex-action@v2
         with:
           root_file: main.tex
           compiler: pdflatex
-          args: -file-line-error -halt-on-error -interaction=nonstopmode
+          args: -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
 
       - name: Move PDF into docs/
         run: |
