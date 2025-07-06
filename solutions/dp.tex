@@ -552,30 +552,6 @@ def min_subset_diff(nums: List[int]) -> int:
 \end{minted}
 
 \noindent\textbf{Problem: Longest Common Subsequence}
-\begin{center}
-\begin{tikzpicture}[every node/.style={anchor=center, minimum size=8mm, font=\bfseries\large}]
-    % Define the matrix
-    \matrix (m) [matrix of nodes, nodes in empty cells,
-        row sep=5mm, column sep=5mm,
-        cells={draw, minimum width=6mm, minimum height=6mm}] {
-        &   & A & B & C & D & E & F & G \\
-        & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-      A & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
-      E & 0 & 1 & 1 & 1 & 1 & 2 & 2 & 2 \\
-      C & 0 & 1 & 1 & 2 & 2 & 2 & 2 & 2 \\
-      F & 0 & 1 & 1 & 2 & 2 & 2 & 3 & 3 \\
-      G & 0 & 1 & 1 & 2 & 2 & 2 & 3 & 4 \\
-    };
-
-    % Highlight LCS path: A → C → F → G
-    \draw[very thick, green!70!black] (m-2-2.north west) -- (m-3-3.north west) -- (m-4-6.north west)
-        -- (m-5-7.north west) -- (m-6-8.north west);
-
-    % Label
-    \node[below=1.5cm , text=green!50!black, font=\Huge\bfseries] {LCS = A, C, F, G};
-
-\end{tikzpicture}
-\end{center}
 \begin{minted}[
 bgcolor=bgcolor10,
 frame=lines,
