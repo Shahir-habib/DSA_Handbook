@@ -1,51 +1,29 @@
 name: Build LaTeX PDF
-
-# Trigger the workflow on push or pull request to the main branch
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # GitHub provides Ubuntu for the build environment
-
+    runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repository
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      # Step 2: Set up LaTeX environment
-      - name: Set up LaTeX
-        uses: dante-ev/setup-texlive-action@v1
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v2
         with:
-          texlive_version: '2020'  # You can specify which version of TeX Live to use
+          root_file: main.tex
+          compiler: pdflatex
 
-      # Step 3: Build the PDF
-      - name: Build PDF
+      - name: Move PDF into docs/
         run: |
-          # Create build directory if it doesn't exist
-          mkdir -p build
-          # Run pdflatex twice to generate the PDF and resolve references
-          pdflatex -output-directory=build main.tex
-          pdflatex -output-directory=build main.tex
+          mkdir -p docs
+          mv main.pdf docs/book.pdf
 
-      # Step 4: Upload the PDF as a build artifact
-      - name: Upload PDF
-        uses: actions/upload-artifact@v3
+      - name: Commit & Push PDF
+        uses: EndBug/add-and-commit@v9
         with:
-          name: book-pdf
-          path: build/book.pdf
-      # Step 5: Commit and push the generated PDF to the repository
-      - name: Commit and push PDF
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git checkout main
-          mv build/book.pdf pdf/book.pdf
-          git add pdf/book.pdf
-          git commit -m "Update PDF"
-          git push
+          message: "Auto‑update book.pdf"
+          add: "docs/book.pdf"
