@@ -4,16 +4,16 @@ front.tex
 intro.tex
 # LaTeX build files
 /build/
-*.aux
-*.log
-*.toc
-*.out
-*.lof
-*.lot
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
+# *.aux
+# *.log
+# *.toc
+# *.out
+# *.lof
+# *.lot
+# *.bbl
+# *.blg
+# *.fdb_latexmk
+# *.fls
 
 # Editor and OS specific files
 .DS_Store
