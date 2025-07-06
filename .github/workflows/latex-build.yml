@@ -24,7 +24,10 @@ jobs:
         with:
           root_file: main.tex
           compiler: pdflatex
-          args: -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode
+          args: -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
+          # then run pdflatex twice:
+      - run: pdflatex -shell-escape main.tex
+      - run: pdflatex -shell-escape main.tex
 
       - name: Move PDF into docs/
         run: |
