@@ -28,8 +28,6 @@ jobs:
           latexmk_shell_escape: true
           extra_args: ["-bibtex-cond"]
 
-      - name: Clean LaTeX build files
-      - run: latexmk -C
 
       - name: Move PDF into docs/
         run: |
