@@ -18,7 +18,9 @@ jobs:
           python-version: '3.x'
       - run: pip install Pygments
 
-      # Compile with shell‑escape
+      - name: Clean LaTeX build files
+        run: latexmk -C
+
       - name: Compile LaTeX (with minted support)
         uses: xu-cheng/latex-action@v2
         with:
@@ -28,6 +30,14 @@ jobs:
           latexmk_shell_escape: true
           extra_args: ["-bibtex-cond"]
 
+      - name: Upload LaTeX logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-logs
+          path: |
+            main.log
+            main.blg
 
       - name: Move PDF into docs/
         run: |
