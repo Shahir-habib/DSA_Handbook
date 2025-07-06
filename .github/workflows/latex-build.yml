@@ -18,9 +18,6 @@ jobs:
           python-version: '3.x'
       - run: pip install Pygments
 
-      - name: Clean LaTeX build files
-        run: latexmk -C
-
       - name: Compile LaTeX (with minted support)
         uses: xu-cheng/latex-action@v2
         with:
